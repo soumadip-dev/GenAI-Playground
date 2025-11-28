@@ -19,7 +19,10 @@ conn = MongoClient(
 @app.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
     docs = conn.fastapi.notes.find({})
+    newDocs = []
     for doc in docs:
-        print(doc)
+        newDocs.append({"id": doc["_id"], "note": doc["note"]})
     # print(docs)
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(
+        "index.html", {"request": request, "docs": newDocs}
+    )
