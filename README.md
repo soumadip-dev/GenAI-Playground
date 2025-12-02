@@ -13,7 +13,7 @@ A personal collection of my hands-on projects, experiments, and learning notes w
 - 🔗 API integrations.
 - ⚡ Mini AI-powered apps.
 
-**🎯 Purpose**
+## 🎯 Purpose
 To track my progress, explore new GenAI concepts, and build a strong foundation through practical projects. 💡
 
 <!--
