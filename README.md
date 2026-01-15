@@ -6,7 +6,14 @@
 A personal collection of my hands-on projects, experiments, and learning notes while exploring Generative AI. 🤖
 </p>
 
+<div align="center">
+  <img src="./banner.png" alt="Banner" width="900">
+</div>
+
+---
+
 ## 🔋 Contents
+
 
 - 🔍 Model experiments.
 - ✏️ Prompt engineering practice.
