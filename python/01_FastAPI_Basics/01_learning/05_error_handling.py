@@ -1,4 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -13,6 +14,11 @@ class MarksSubmissionRequest(BaseModel):
     student_id: str
     marks: int
     subject: str
+
+
+# ====================
+# ERROR HANDLING
+# ====================
 
 
 # Retrieve details of a student by their ID.
@@ -68,5 +74,68 @@ def submit_student_marks(submission_data: MarksSubmissionRequest):
         }
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Something went wrong on server: {str(e)}"
+            status_code=500,
+            detail=f"Something went wrong on server: {str(e)}",
         )
+
+
+# Custome exception
+class UserNotFoundException(Exception):
+    def __init__(self, username: str):
+        self.username = username
+
+
+@app.exception_handler(UserNotFoundException)
+def user_not_found_exception_handler(request: Request, exc: UserNotFoundException):
+    return JSONResponse(
+        status_code=404,
+        content={
+            "message": f"User with username {exc.username} not found",
+            "error": "UserNotFoundException",
+        },
+    )
+
+
+@app.get("/users/{username}")
+def get_user(username: str):
+    for student in student_records.values():
+        if student["name"].lower() == username.lower():
+            return student
+        raise UserNotFoundException(username)
+
+
+# ====================
+# STATUS CODES & CUSTOM RESPONSES
+#  ====================
+
+
+class User(BaseModel):
+    username: str
+    email: str
+
+
+@app.post(
+    "/create-user",
+    status_code=status.HTTP_201_CREATED,
+)
+def create_user(user: User):
+    return {
+        "message": "User created successfully",
+        "data": user,
+    }
+
+
+@app.delete(
+    "/users/{username}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_user(username: str):
+    return
+
+
+@app.put(
+    "/users/{username}",
+    status_code=status.HTTP_202_ACCEPTED,
+)
+def update_user(username: str):
+    return {"message": f"Update request accepted for {username}"}
