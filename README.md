@@ -1,27 +1,44 @@
-<h1 align="center">
-  GenAI-Playground ✨
-</h1>
+<div align="center">
 
-<p align="center">
-A personal collection of my hands-on projects, experiments, and learning notes while exploring Generative AI. 🤖
+# GenAI-Playground ✨
+
+<p>
+A personal collection of <b>hands-on projects</b>, <b>experiments</b>, and <b>learning notes</b> while exploring the world of Generative AI. 🤖
 </p>
 
-<div align="center">
-  <img src="./02_JSON_Structured_Output/client/public/banner.png" alt="Banner" width="900">
-</div>
+<img src="./javascript/02_Structured_Output_JSON/client/public/banner.png" alt="Banner" width="900">
 
----
+</div>
 
 ## 🔋 Contents
 
-- 🔍 Model experiments.
-- ✏️ Prompt engineering practice.
-- 🔗 API integrations.
-- ⚡ Mini AI-powered apps.
+- 🤖 AI agents and workflows
+- 📝 Prompt engineering
+- 📄 Structured outputs and JSON schemas
+- 🔗 API integrations
+- ⚡ FastAPI fundamentals
+- 🦜 LangChain and LangGraph
+- 🔍 Retrieval-Augmented Generation (RAG)
+- 🧠 Embeddings and vector databases
+- 🛠️ MCP and AI engineering concepts
+- 🚀 Mini AI-powered applications
 
 ## 🎯 Purpose
 
-To track my progress, explore new GenAI concepts, and build a strong foundation through practical projects. 💡
+This repository serves as a:
+
+- 📖 Learning journal
+- 🧪 Experiment playground
+- 🛠️ Collection of practical implementations
+- 📈 Progress tracker throughout my GenAI journey
+
+<br>
+
+<div align="center">
+
+> **Learning by building, experimenting, and iterating. 🌱**
+
+</div>
 
 <!--
 

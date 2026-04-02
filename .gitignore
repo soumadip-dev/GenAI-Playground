@@ -1,4 +1,5 @@
 # dependencies
+
 node_modules
 /node_modules
 jspm_packages/
@@ -15,6 +16,7 @@ web_modules/
 starter
 
 # output
+
 out
 /out
 dist
@@ -31,9 +33,11 @@ build/Release
 .dynamodb/
 
 # package artifacts
+
 *.tgz
 
 # code coverage
+
 coverage
 /coverage
 *.lcov
@@ -41,6 +45,7 @@ coverage
 lib-cov
 
 # logs
+
 logs
 *.log
 npm-debug.log*
@@ -51,12 +56,14 @@ lerna-debug.log*
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # runtime data
+
 pids
 *.pid
 *.seed
 *.pid.lock
 
 # dotenv environment variable files
+
 .env
 .env.development.local
 .env.test.local
@@ -66,6 +73,7 @@ pids
 .env*
 
 # caches
+
 .eslintcache
 .stylelintcache
 .cache
@@ -85,27 +93,34 @@ pids
 .yarn-integrity
 
 # TypeScript
+
 *.tsbuildinfo
 next-env.d.ts
 
 # Next.js
+
 .next
 /.next/
 .vercel
 
 # Bower
+
 bower_components
 
 # node-waf
+
 .lock-wscript
 
 # TernJS
+
 .tern-port
 
 # VSCode
+
 .vscode-test
 
 # IntelliJ / Android Studio
+
 .idea
 .idea/
 *.iml
@@ -114,10 +129,12 @@ deploymentTargetDropDown.xml
 render.experimental.xml
 
 # Eclipse
+
 .project
 .classpath
 
 # React
+
 .DS_*
 **/*.backup.*
 **/*.back.*
@@ -127,10 +144,12 @@ thumb
 sketch
 
 # React Native
+
 .expo
-__generated__
+**generated**
 
 # Buck
+
 buck-out/
 .buckconfig.local
 .buckd/
@@ -138,6 +157,7 @@ buck-out/
 .fakebuckversion
 
 # Gradle
+
 .gradle
 .gradle/
 **/build/
@@ -148,6 +168,7 @@ gradle-app.setting
 .gradletasknamecache
 
 # Android
+
 local.properties
 captures/
 .externalNativeBuild/
@@ -160,11 +181,13 @@ google-services.json
 *.hprof
 
 # Xcode
+
 xcuserdata/
 *.xcscmblueprint
 *.xccheckout
 
 # macOS
+
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -184,6 +207,7 @@ Temporary Items
 .apdisk
 
 # Linux
+
 *~
 .fuse_hidden*
 .directory
@@ -191,6 +215,7 @@ Temporary Items
 .nfs*
 
 # Misc
+
 *.pem
 .pids
 .pids-debug.log
@@ -199,4 +224,70 @@ Temporary Items
 .pids-debug.log.json.*
 .pids-debug.log.*
 .pids-debug.*
-.pids.*
+
+# ============================================================================
+
+# Python 
+
+# ============================================================================
+
+# Python bytecode
+
+**pycache**/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+
+venv/
+.venv/
+env/
+ENV/
+
+# Testing & coverage
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Type checking
+
+.mypy_cache/
+.pyre/
+
+# Jupyter
+
+.ipynb_checkpoints/
+
+# Build artifacts
+
+dist/
+build/
+*.egg-info/
+
+# Databases
+
+*.db
+*.sqlite3
+
+# Logs
+
+*.log
+
+# Uploaded files (optional)
+
+uploads/
+media/
+
+# VS Code
+
+.vscode/
+
+# Environment variables
+
+.env
+.env.*
+
+# FastAPI runtime
+
+*.pid
