@@ -1,4 +1,4 @@
-import { type Provider, env } from './env';
+import { type Provider, env } from './config/env.config';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatGoogle } from '@langchain/google';
 import { ChatGroq } from '@langchain/groq';
@@ -23,6 +23,7 @@ export function createChatModel(): { provider: Provider; model: any } {
       model: new ChatOpenAI({
         ...modelConfig,
         model: 'gpt-5-nano',
+        apiKey: env.OPENAI_API_KEY,
       }),
     };
   }
@@ -36,6 +37,7 @@ export function createChatModel(): { provider: Provider; model: any } {
       model: new ChatGoogle({
         ...modelConfig,
         model: 'gemini-2.5-flash-lite',
+        apiKey: env.GEMINI_API_KEY,
       }),
     };
   }
@@ -49,6 +51,7 @@ export function createChatModel(): { provider: Provider; model: any } {
       model: new ChatGroq({
         ...modelConfig,
         model: 'llama-3.1-8b-instant',
+        apiKey: env.GROQ_API_KEY,
       }),
     };
   }
@@ -59,6 +62,7 @@ export function createChatModel(): { provider: Provider; model: any } {
     model: new ChatGoogle({
       ...modelConfig,
       model: 'gemini-2.5-flash-lite',
+      apiKey: env.GEMINI_API_KEY,
     }),
   };
 }
