@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "server_json_structured_output",
   "module": "src/server.ts",
   "type": "module",
   "private": true,
@@ -10,13 +10,21 @@
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
     "@types/node": "^25.9.2",
-    "tsx": "^4.22.4"
+    "tsx": "^4.22.4",
+    "@types/express": "^5.0.6"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
+    "@langchain/core": "^1.1.49",
+    "@langchain/google": "^0.1.12",
+    "@langchain/groq": "^1.2.1",
+    "@langchain/openai": "^1.4.7",
     "cors": "^2.8.6",
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.2.0",
+    "zod": "^4.4.3"
   }
 }
