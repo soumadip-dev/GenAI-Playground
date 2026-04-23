@@ -1,56 +1,35 @@
 import dotenv from 'dotenv';
+import { z } from 'zod';
 
-let loaded = false;
+dotenv.config();
 
-function loadEnv(): void {
-  if (loaded) return;
+const EnvSchema = z.object({
+  NODE_ENV: z.string().default('development'),
 
-  dotenv.config();
-  loaded = true;
-}
+  PORT: z.coerce.number().default(8080),
 
-loadEnv();
+  CORS_ORIGINS: z
+    .string()
+    .default('')
+    .transform(value =>
+      value
+        .split(',')
+        .map(origin => origin.trim())
+        .filter(Boolean)
+    ),
 
-export type Provider = 'openai' | 'gemini' | 'groq';
+  OPENAI_API_KEY: z.string().optional(),
+  GROQ_API_KEY: z.string().optional(),
+  GEMINI_API_KEY: z.string().optional(),
 
-interface Env {
-  NODE_ENV: string;
-  PORT: number;
-  CORS_ORIGINS: string[];
+  MODEL_PROVIDER: z.enum(['openai', 'gemini', 'groq']).default('gemini'),
 
-  OPENAI_API_KEY: string;
-  GROQ_API_KEY: string;
-  GEMINI_API_KEY: string;
+  OPENAI_MODEL: z.string().default('gpt-5-nano'),
+  GEMINI_MODEL: z.string().default('gemini-2.5-flash-lite'),
+  GROQ_MODEL: z.string().default('llama-3.1-8b-instant'),
 
-  MODEL_PROVIDER: Provider;
+  SEARCH_PROVIDER: z.string().default('tavily'),
+  TAVILY_API_KEY: z.string().optional(),
+});
 
-  OPENAI_MODEL: string;
-  GEMINI_MODEL: string;
-  GROQ_MODEL: string;
-
-  SEARCH_PROVIDER: string;
-  TAVILY_API_KEY: string;
-}
-
-const port = Number(process.env.PORT);
-
-export const env: Env = {
-  NODE_ENV: process.env.NODE_ENV || 'development',
-  PORT: Number.isNaN(port) ? 8080 : port,
-  CORS_ORIGINS: process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
-    : [],
-
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY ?? '',
-  GROQ_API_KEY: process.env.GROQ_API_KEY ?? '',
-  GEMINI_API_KEY: process.env.GEMINI_API_KEY ?? '',
-
-  MODEL_PROVIDER: (process.env.MODEL_PROVIDER as Provider) ?? 'openai',
-
-  OPENAI_MODEL: process.env.OPENAI_MODEL ?? '',
-  GEMINI_MODEL: process.env.GEMINI_MODEL ?? '',
-  GROQ_MODEL: process.env.GROQ_MODEL ?? '',
-
-  SEARCH_PROVIDER: process.env.SEARCH_PROVIDER ?? '',
-  TAVILY_API_KEY: process.env.TAVILY_API_KEY ?? '',
-};
+export const env = EnvSchema.parse(process.env);
