@@ -1,38 +1,26 @@
 import dotenv from 'dotenv';
+import { z } from 'zod';
 
-let loaded = false;
-
-function loadEnv(): void {
-  if (loaded) return;
-
-  dotenv.config();
-  loaded = true;
-}
-
-loadEnv();
+dotenv.config();
 
 export type Provider = 'openai' | 'gemini' | 'groq';
 
-interface EnvConfig {
-  PORT: number;
-  NODE_ENV: string;
-  CORS_ORIGINS: string[];
-  OPENAI_API_KEY: string;
-  GEMINI_API_KEY: string;
-  GROQ_API_KEY: string;
-  PROVIDER: Provider;
-}
+const EnvSchema = z.object({
+  NODE_ENV: z.string().default('development'),
+  PORT: z.coerce.number().default(8080),
+  CORS_ORIGINS: z
+    .string()
+    .default('')
+    .transform(value =>
+      value
+        .split(',')
+        .map(origin => origin.trim())
+        .filter(Boolean)
+    ),
+  OPENAI_API_KEY: z.string().optional(),
+  GROQ_API_KEY: z.string().optional(),
+  GEMINI_API_KEY: z.string().optional(),
+  PROVIDER: z.enum(['openai', 'gemini', 'groq']).default('openai'),
+});
 
-const port = Number(process.env.PORT);
-
-export const env: EnvConfig = {
-  PORT: Number.isNaN(port) ? 8080 : port,
-  NODE_ENV: process.env.NODE_ENV || 'development',
-  CORS_ORIGINS: process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
-    : [],
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY ?? '',
-  GEMINI_API_KEY: process.env.GEMINI_API_KEY ?? '',
-  GROQ_API_KEY: process.env.GROQ_API_KEY ?? '',
-  PROVIDER: (process.env.PROVIDER as EnvConfig['PROVIDER']) ?? 'openai',
-};
+export const env = EnvSchema.parse(process.env);
