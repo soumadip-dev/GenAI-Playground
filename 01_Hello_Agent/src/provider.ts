@@ -122,3 +122,54 @@ async function helloGroq(): Promise<HelloResponse> {
   };
 }
 
+//* Sends a simple greeting prompt to the OpenAI API.
+async function helloOpenAI(): Promise<HelloResponse> {
+  const openaiApiKey = env.OPENAI_API_KEY;
+
+  if (!openaiApiKey) {
+    throw new Error('OPENAI_API_KEY is not configured.');
+  }
+
+  const model = 'gpt-5-nano';
+
+  // OpenAI chat completion endpoint.
+  const endpointUrl = 'https://api.openai.com/v1/chat/completions';
+
+  const apiResponse = await fetch(endpointUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${openaiApiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages: [
+        {
+          role: 'user',
+          content: 'Say hello to the world!',
+        },
+      ],
+      temperature: 0,
+    }),
+  });
+
+  if (!apiResponse.ok) {
+    throw new Error(
+      `OpenAI API request failed with status ${apiResponse.status}: ${await apiResponse.text()}`
+    );
+  }
+
+  const responseBody = (await apiResponse.json()) as OpenAIChatCompletionResponse;
+
+  // Extract the generated message from the first completion choice.
+  const generatedMessage =
+    responseBody.choices?.[0]?.message?.content ??
+    'OpenAI returned a successful response, but no message content was found.';
+
+  return {
+    ok: true,
+    provider: 'openai',
+    model,
+    message: String(generatedMessage).trim(),
+  };
+}
