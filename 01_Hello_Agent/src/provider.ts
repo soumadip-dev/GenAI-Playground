@@ -173,3 +173,58 @@ async function helloOpenAI(): Promise<HelloResponse> {
     message: String(generatedMessage).trim(),
   };
 }
+
+//* Selects a provider based on the PROVIDER environment variable.
+export async function selectAndHello(): Promise<HelloResponse> {
+  const configuredProvider = (env.PROVIDER || '').toLowerCase();
+
+  // Use the explicitly configured provider.
+  if (configuredProvider === 'gemini') {
+    return helloGemini();
+  }
+
+  if (configuredProvider === 'groq') {
+    return helloGroq();
+  }
+
+  if (configuredProvider === 'openai') {
+    return helloOpenAI();
+  }
+
+  if (configuredProvider) {
+    throw new Error(
+      `Unsupported provider "${configuredProvider}". Supported values are: openai, gemini, and groq.`
+    );
+  }
+
+  // Try Gemini first.
+  if (env.GEMINI_API_KEY) {
+    try {
+      return await helloGemini();
+    } catch (error) {
+      console.error('Gemini request failed:', error);
+    }
+  }
+
+  // Fall back to Groq.
+  if (env.GROQ_API_KEY) {
+    try {
+      return await helloGroq();
+    } catch (error) {
+      console.error('Groq request failed:', error);
+    }
+  }
+
+  // Fall back to OpenAI.
+  if (env.OPENAI_API_KEY) {
+    try {
+      return await helloOpenAI();
+    } catch (error) {
+      console.error('OpenAI request failed:', error);
+    }
+  }
+
+  throw new Error(
+    'No AI provider is configured. Set GEMINI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY.'
+  );
+}
