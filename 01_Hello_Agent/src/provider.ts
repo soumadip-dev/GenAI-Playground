@@ -33,7 +33,7 @@ async function helloGemini(): Promise<HelloResponse> {
 
   const model = 'gemini-2.5-flash-lite';
 
-  const endpointUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  const endpointUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiApiKey}`;
 
   const apiResponse = await fetch(endpointUrl, {
     method: 'POST',
