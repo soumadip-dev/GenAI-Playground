@@ -7,13 +7,12 @@ A personal collection of my hands-on projects, experiments, and learning notes w
 </p>
 
 <div align="center">
-  <img src="./banner.png" alt="Banner" width="900">
+  <img src="./02_JSON_Structured_Output/client/public/banner.png" alt="Banner" width="900">
 </div>
 
 ---
 
 ## 🔋 Contents
-
 
 - 🔍 Model experiments.
 - ✏️ Prompt engineering practice.
@@ -21,6 +20,7 @@ A personal collection of my hands-on projects, experiments, and learning notes w
 - ⚡ Mini AI-powered apps.
 
 ## 🎯 Purpose
+
 To track my progress, explore new GenAI concepts, and build a strong foundation through practical projects. 💡
 
 <!--
