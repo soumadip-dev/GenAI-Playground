@@ -1,10 +1,10 @@
 {
-  "name": "hello_agent",
-  "module": "src/index.ts",
+  "name": "server_json_structured_output",
+  "module": "src/server.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/server.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -12,9 +12,11 @@
     "tsx": "^4.22.4"
   },
   "peerDependencies": {
-    "typescript": "^6.0.3"
+    "typescript": "^5"
   },
   "dependencies": {
-    "dotenv": "^17.4.2"
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
   }
 }

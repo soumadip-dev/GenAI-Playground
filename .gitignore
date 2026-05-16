@@ -1,0 +1,202 @@
+# dependencies
+node_modules
+/node_modules
+jspm_packages/
+web_modules/
+.pnp
+.pnp.js
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+*_starter
+
+# output
+out
+/out
+dist
+/build
+build/Release
+.svelte-kit
+.nuxt
+.vuepress/dist
+.temp
+.docusaurus
+.serverless/
+.fusebox/
+.webpack/
+.dynamodb/
+
+# package artifacts
+*.tgz
+
+# code coverage
+coverage
+/coverage
+*.lcov
+.nyc_output
+lib-cov
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+.env*.local
+.env*
+
+# caches
+.eslintcache
+.stylelintcache
+.cache
+.cache/
+.parcel-cache
+.grunt
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.npm
+.node_repl_history
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.yarn-integrity
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Next.js
+.next
+/.next/
+.vercel
+
+# Bower
+bower_components
+
+# node-waf
+.lock-wscript
+
+# TernJS
+.tern-port
+
+# VSCode
+.vscode-test
+
+# IntelliJ / Android Studio
+.idea
+.idea/
+*.iml
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+# Eclipse
+.project
+.classpath
+
+# React
+.DS_*
+**/*.backup.*
+**/*.back.*
+*.sublime*
+psd
+thumb
+sketch
+
+# React Native
+.expo
+__generated__
+
+# Buck
+buck-out/
+.buckconfig.local
+.buckd/
+.buckversion
+.fakebuckversion
+
+# Gradle
+.gradle
+.gradle/
+**/build/
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+.gradletasknamecache
+
+# Android
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+output.json
+*.jks
+*.keystore
+google-services.json
+*.hprof
+
+# Xcode
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Misc
+*.pem
+.pids
+.pids-debug.log
+.pids-debug.log*
+.pids-debug.log.json
+.pids-debug.log.json.*
+.pids-debug.log.*
+.pids-debug.*
+.pids.*
