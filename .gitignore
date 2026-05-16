@@ -12,7 +12,7 @@ web_modules/
 !.yarn/releases
 !.yarn/versions
 
-*_starter
+starter
 
 # output
 out
