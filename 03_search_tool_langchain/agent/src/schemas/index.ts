@@ -21,3 +21,11 @@ export const FetchPageContentOutputSchema = z.object({
   url: z.url(),
   content: z.string().min(1),
 });
+
+export const SummarizeInputSchema = z.object({
+  text: z.string().min(50, 'Input text must contain at least 50 characters.'),
+});
+
+export const SummarizeOutputSchema = z.object({
+  summary: z.string().min(1, 'Summary content must not be empty.'),
+});
