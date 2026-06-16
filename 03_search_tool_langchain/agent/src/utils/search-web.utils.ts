@@ -8,7 +8,7 @@
  */
 
 import { env } from '../config/env.config';
-import { WebSearchResultSchema, WebSearchResultsSchema } from './schemas';
+import { SearchWebResultSchema, SearchWebResultsSchema } from '../schemas/index';
 
 //* Performs a web search and returns normalized search results.
 export async function searchWeb(query: string) {
@@ -52,7 +52,7 @@ async function searchWithTavily(query: string) {
   const searchResults = Array.isArray(responseBody?.results) ? responseBody.results : [];
 
   const normalizedResults = searchResults.slice(0, 5).map((result: any) =>
-    WebSearchResultSchema.parse({
+    SearchWebResultSchema.parse({
       title: String(result?.title ?? '').trim() || 'Untitled',
       url: String(result?.url ?? '').trim(),
       snippet: String(result?.content ?? '')
@@ -61,7 +61,7 @@ async function searchWithTavily(query: string) {
     })
   );
 
-  return WebSearchResultsSchema.parse(normalizedResults);
+  return SearchWebResultsSchema.parse(normalizedResults);
 }
 
 //* Safely extracts the response body for error reporting.
