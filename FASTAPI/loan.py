@@ -29,3 +29,11 @@ def predict_loan_approval(loan_request: LoanRequest):
             "loan_status": loan_status,
         },
     }
+
+
+@app.get("/customer/{customer_id}")
+def get_customer_loan_status(customer_id: int):
+    return {
+        "customer_id": customer_id,
+        "status": f"Customer record of {customer_id} fetched successfully.",
+    }
