@@ -67,6 +67,5 @@ chat_response = groq_client.chat.completions.create(
     ],
 )
 
-
 assistant_reply = chat_response.choices[0].message.content
 print(assistant_reply)
