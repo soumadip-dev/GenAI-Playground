@@ -32,30 +32,52 @@ This repository serves as a:
 - 🛠️ Collection of practical implementations
 - 📈 Progress tracker throughout my GenAI journey
 
-<br>
+---
+
+## 🐍 Python Development Guide
+
+### 1. Create a virtual environment
+
+```bash
+python -m venv venv
+```
+
+### 2. Activate the virtual environment
+
+**Linux / macOS**
+
+```bash
+source venv/bin/activate
+```
+
+**Windows**
+
+```bash
+venv\Scripts\activate
+```
+
+### 3. Install project dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the development server of the FastAPI application
+
+```bash
+uvicorn main:app --reload
+```
+
+### 5. Update dependencies (when required)
+
+```bash
+pip freeze > requirements.txt
+```
+
+---
 
 <div align="center">
 
 > **Learning by building, experimenting, and iterating. 🌱**
 
 </div>
-
-<!--
-
-====================================================================================================
-PYTHON TEMP NOTE::::::::::::
-
-### Create a virtual environment
-```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
-```
-```bash
-pip freeze > requirements.txt
-```
-
-uvicorn main:app --reload
-
-====================================================================================================
- -->
