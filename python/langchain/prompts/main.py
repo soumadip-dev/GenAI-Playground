@@ -31,7 +31,7 @@ class InputRequest(BaseModel):
 
 # Static prompt
 @app.post("/summarize")
-async def summarize_text(request: InputRequest):
+async def generate_summary(request: InputRequest):
     if not request.input.strip():
         return {
             "success": False,
@@ -81,8 +81,8 @@ class SummaryRequest(BaseModel):
 
 
 # Dynamic prompt
-@app.post("/summarize-paper")
-async def summarize_paper(request: SummaryRequest):
+@app.post("/paper-summary/prompt")
+async def generate_paper_summary_from_prompt(request: SummaryRequest):
 
     if (
         not request.paperInput.strip()
@@ -106,6 +106,38 @@ async def summarize_paper(request: SummaryRequest):
 
     # Invoke the LLM.
     response = llm.invoke(formatted_prompt)
+
+    return {
+        "success": True,
+        "message": "Research paper summary generated successfully.",
+        "data": {"summary": response.content},
+    }
+
+
+# Dynamic prompt with langchain_chain
+@app.post("/paper-summary/chain")
+async def generate_paper_summary_with_chain(request: SummaryRequest):
+
+    if (
+        not request.paperInput.strip()
+        or not request.styleInput.strip()
+        or not request.lengthInput.strip()
+    ):
+        return {
+            "success": False,
+            "message": "All inputs are required.",
+            "data": None,
+        }
+
+    chain = template | llm
+
+    response = chain.invoke(
+        {
+            "paper_input": request.paperInput,
+            "style_input": request.styleInput,
+            "length_input": request.lengthInput,
+        }
+    )
 
     return {
         "success": True,
