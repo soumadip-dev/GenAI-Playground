@@ -3,6 +3,7 @@
 import { SubmitEvent, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
@@ -49,6 +50,7 @@ export default function Home() {
       inputRef.current?.focus();
     } catch (error) {
       console.error(error);
+      toast.error('Something went wrong');
     } finally {
       setLoading(false);
     }

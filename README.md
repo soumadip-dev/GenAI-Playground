@@ -51,6 +51,9 @@ python -m venv venv
 source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate     # Windows
 ```
+```bash
+pip freeze > requirements.txt
+```
 
 uvicorn main:app --reload
 
