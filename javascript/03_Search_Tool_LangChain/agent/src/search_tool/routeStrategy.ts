@@ -1,3 +1,4 @@
+//* Determines the route for the search query.
 export function routeStrategy(query: string): 'web' | 'direct' {
   const normalizedQuery = query.toLowerCase().trim();
 

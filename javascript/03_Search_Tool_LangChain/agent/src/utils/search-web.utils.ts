@@ -18,7 +18,7 @@ export async function searchWeb(query: string) {
     return [];
   }
 
-  return searchWithTavily(searchQuery);
+  return await searchWithTavily(searchQuery);
 }
 
 //* Executes a search request using Tavily.
@@ -27,41 +27,49 @@ async function searchWithTavily(query: string) {
     throw new Error('TAVILY_API_KEY is missing');
   }
 
-  const response = await fetch('https://api.tavily.com/search', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${env.TAVILY_API_KEY}`,
-    },
-    body: JSON.stringify({
-      query,
-      search_depth: 'basic',
-      max_results: 5,
-      include_answer: false,
-      include_images: false,
-    }),
-  });
+  try {
+    const response = await fetch('https://api.tavily.com/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${env.TAVILY_API_KEY}`,
+      },
+      body: JSON.stringify({
+        query,
+        search_depth: 'basic',
+        max_results: 5,
+        include_answer: false,
+        include_images: false,
+      }),
+    });
 
-  if (!response.ok) {
-    const errorMessage = await getResponseBodySafely(response);
+    if (!response.ok) {
+      const errorMessage = await getResponseBodySafely(response);
 
-    throw new Error(`Tavily request failed (${response.status}): ${errorMessage}`);
+      throw new Error(`Tavily request failed (${response.status}): ${errorMessage}`);
+    }
+
+    const responseBody = await response.json();
+    const searchResults = Array.isArray(responseBody?.results) ? responseBody.results : [];
+
+    const normalizedResults = searchResults.slice(0, 5).map((result: any) =>
+      SearchWebResultSchema.parse({
+        title: String(result?.title ?? '').trim() || 'Untitled',
+        url: String(result?.url ?? '').trim(),
+        snippet: String(result?.content ?? '')
+          .trim()
+          .slice(0, 220),
+      })
+    );
+
+    return SearchWebResultsSchema.parse(normalizedResults);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Tavily search failed: ${error.message}`);
+    }
+
+    throw new Error('Tavily search failed');
   }
-
-  const responseBody = await response.json();
-  const searchResults = Array.isArray(responseBody?.results) ? responseBody.results : [];
-
-  const normalizedResults = searchResults.slice(0, 5).map((result: any) =>
-    SearchWebResultSchema.parse({
-      title: String(result?.title ?? '').trim() || 'Untitled',
-      url: String(result?.url ?? '').trim(),
-      snippet: String(result?.content ?? '')
-        .trim()
-        .slice(0, 220),
-    })
-  );
-
-  return SearchWebResultsSchema.parse(normalizedResults);
 }
 
 //* Safely extracts the response body for error reporting.
