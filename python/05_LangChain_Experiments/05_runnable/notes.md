@@ -178,16 +178,27 @@ result = (prompt | model | RunnableLambda(lambda x: x.upper())).invoke(input)
 
 #### **RunnablePassthrough**
 
-Forwards input as output without modification. Acts as a placeholder for optional processing steps.
+RunnablePassthrough **is a special primitive that simply** return the input as output without modifying it. It is useful when you need to pass the input through a sequence of steps without any additional processing.
+It is useful when you want to keep the original output of a previous step while simultaneously performing additional processing on it.
+
+For example, suppose an LLM first generates a joke. You want to:
+
+keep the original joke, and
+generate an explanation of that joke.
+
+Without RunnablePassthrough, only the explanation would be returned. RunnablePassthrough lets you preserve the joke while another branch processes it.
 
 ```python
-from langchain.schema.runnable import RunnablePassthrough
+from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 
-# Keep original input when you also need additional processing
-chain = RunnableParallel({
-    "original": RunnablePassthrough(),
-    "processed": model
-})
+parallel_chain = RunnableParallel(
+    {
+        "joke": RunnablePassthrough(),      # Keep the original joke
+        "explanation": explanation_chain,   # Generate an explanation
+    }
+)
+
+# Returns: {"joke": "...", "explanation": "..."}
 ```
 
 #### **RunnableBranch**
