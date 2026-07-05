@@ -164,16 +164,17 @@ results = parallel.invoke({"topic": "AI"})
 
 #### **RunnableLambda**
 
-Wraps custom Python functions into Runnables, allowing them to integrate seamlessly with LCEL.
+RunnableLambda is a runnable primitive that allows you to apply custom Python functions within an Al pipeline.
+It acts as a middleware between different Al components, enabling preprocessing, transformation, API calls, filtering, and post-processing in a LangChain workflow.
 
 ```python
-from langchain.schema.runnable import RunnableLambda
+from langchain_core.runnables import RunnableLambda, RunnableSequence
 
 def double(x):
     return x * 2
 
-doubled = RunnableLambda(double)
-result = (prompt | model | RunnableLambda(lambda x: x.upper())).invoke(input)
+chain = RunnableSequence(prompt, model, RunnableLambda(double), parser)
+result = chain.invoke(input)
 ```
 
 #### **RunnablePassthrough**
@@ -216,53 +217,6 @@ branch = RunnableBranch(
 
 result = branch.invoke(user_input)
 ```
-
----
-
-## Real-World Example: Building a RAG Pipeline
-
-Here's how Runnables & LCEL make building a Retrieval-Augmented Generation (RAG) system simple:
-
-```python
-from langchain.prompts import ChatPromptTemplate
-from langchain.chat_models import ChatOpenAI
-from langchain.output_parsers import StrOutputParser
-from langchain.schema.runnable import RunnableParallel, RunnablePassthrough
-
-# Define prompt template
-template = """Answer the question based on the context:
-Context: {context}
-Question: {question}
-Answer:"""
-
-prompt = ChatPromptTemplate.from_template(template)
-model = ChatOpenAI()
-parser = StrOutputParser()
-
-# Build the RAG chain in 3 lines
-rag_chain = (
-    RunnableParallel({
-        "context": retriever,
-        "question": RunnablePassthrough()
-    })
-    | prompt
-    | model
-    | parser
-)
-
-# Execute with streaming
-for chunk in rag_chain.stream({"question": "What is LCEL?"}):
-    print(chunk, end="", flush=True)
-```
-
-**What's happening:**
-
-1. `RunnableParallel` fetches context from retriever while keeping the question
-2. Output is piped to the prompt template
-3. Prompt is sent to the model
-4. Response is parsed and returned
-
-All with **zero glue code**—just clean, declarative composition.
 
 ---
 
