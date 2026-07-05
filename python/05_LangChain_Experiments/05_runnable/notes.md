@@ -149,16 +149,15 @@ RunnableParallel is a runnable primitive that allows multiple runnables to execu
 Each runnable receives the same input and processes it independently, producing a dictionary of outputs.
 
 ```python
-from langchain.schema.runnable import RunnableParallel
+from langchain_core.runnables import RunnableParallel, RunnableSequence
 
 parallel = RunnableParallel({
-    "summary": summarizer,
-    "sentiment": sentiment_analyzer,
-    "entities": entity_extractor
+    "summary": RunnableSequence(summarizer_prompt,model, parser),
+    "sentiment": RunnableSequence(sentiment_prompt,model, parser),
 })
 
-results = parallel.invoke(text)
-# Returns: {"summary": "...", "sentiment": "...", "entities": [...]}
+results = parallel.invoke({"topic": "AI"})
+# Returns: {"summary": "...", "sentiment": "...", }
 ```
 
 **Use Case**: Analyze the same input from multiple angles without waiting for sequential execution.
