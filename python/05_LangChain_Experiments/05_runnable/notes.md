@@ -76,9 +76,9 @@ These are the **core LangChain components** that have been converted into Runnab
 Dynamically format raw user inputs into structured prompts.
 
 ```python
-from langchain.prompts import ChatPromptTemplate
+from langchain.prompts import PromptTemplate
 
-prompt = ChatPromptTemplate.from_template(
+prompt = PromptTemplate.from_template(
     "You are a helpful assistant. Answer: {question}"
 )
 # Now usable in a pipeline with .invoke(), .stream(), etc.
@@ -89,9 +89,13 @@ prompt = ChatPromptTemplate.from_template(
 Execute the actual AI model call (e.g., `ChatOpenAI`, `ChatGroq`).
 
 ```python
-from langchain.chat_models import ChatOpenAI
+from langchain_groq import ChatGroq
 
-model = ChatOpenAI(model="gpt-4")
+model = ChatGroq(
+    model="llama-3.1-8b-instant",
+    temperature=0.5,
+    max_tokens=10,
+)
 # Standardized interface for any LLM
 ```
 
@@ -114,7 +118,7 @@ Extract structured data from raw LLM responses.
 - **`CommaSeparatedListOutputParser`** – Returns comma-separated lists
 
 ```python
-from langchain.output_parsers import PydanticOutputParser
+from langchain_core.output_parsers import PydanticOutputParser
 
 parser = PydanticOutputParser(pydantic_object=User)
 ```
@@ -127,16 +131,22 @@ These are the **functional building blocks** that act as glue for structuring lo
 
 #### **RunnableSequence** (The Pipe Operator `|`)
 
-Runs steps in order. Output of one becomes input to the next.
+RunnableSequence is a sequential chain of runnables in LangChain that executes each step one after another, passing the output of one step as the input to the next.
+It is useful when you need to compose multiple runnables together in a structured workflow.
 
 ```python
-chain = prompt | model | output_parser
+from langchain_core.runnables import RunnableSequence
+
+
+
+chain = RunnableSequence(prompt, model, output_parser)
 result = chain.invoke({"question": "What is AI?"})
 ```
 
 #### **RunnableParallel**
 
-Runs multiple independent steps simultaneously, then merges results.
+RunnableParallel is a runnable primitive that allows multiple runnables to execute in parallel.
+Each runnable receives the same input and processes it independently, producing a dictionary of outputs.
 
 ```python
 from langchain.schema.runnable import RunnableParallel
