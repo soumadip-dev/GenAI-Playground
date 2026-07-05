@@ -38,8 +38,7 @@ gemini_chat_model = ChatGoogleGenerativeAI(
 # -----------------------------------------------------------------------------
 
 # Prompt for generating study notes
-study_notes_prompt = PromptTemplate(
-    template="""
+study_notes_prompt = PromptTemplate.from_template("""
 You are an expert note-taking assistant.
 
 Read the following text and create well-structured study notes.
@@ -48,13 +47,10 @@ Format the notes using clear headings and bullet points.
 
 Text:
 {text}
-""",
-    input_variables=["text"],
-)
+""")
 
 # Prompt for generating quiz questions
-quiz_generation_prompt = PromptTemplate(
-    template="""
+quiz_generation_prompt = PromptTemplate.from_template("""
 You are an expert quiz generator.
 
 Read the following text and create a study quiz.
@@ -64,13 +60,10 @@ Include a variety of question types such as:
 
 Text:
 {text}
-""",
-    input_variables=["text"],
-)
+""")
 
 # Prompt for combining notes and quiz
-study_guide_prompt = PromptTemplate(
-    template="""
+study_guide_prompt = PromptTemplate.from_template("""
 You are an educational content organizer.
 
 Combine the following study notes and quiz into a single,
@@ -83,9 +76,7 @@ Quiz:
 {quiz}
 
 Return the result in plain text format no md or html.
-""",
-    input_variables=["notes", "quiz"],
-)
+""")
 
 
 # Output Parser : Converts the model responses into plain Python strings.

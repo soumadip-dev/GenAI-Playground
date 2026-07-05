@@ -18,15 +18,13 @@ chat_model = ChatGroq(
 # Prompt Templates
 
 # Prompt 1: Generate a short report on the given topic
-report_generation_prompt = PromptTemplate(
-    template="Generate a 5–6 line report on the topic: {topic}. Return the response in plain text format.",
-    input_variables=["topic"],
+report_generation_prompt = PromptTemplate.from_template(
+    "Generate a 5–6 line report on the topic: {topic}. Return the response in plain text format.",
 )
 
 # Prompt 2: Summarize the generated report in one line
-report_summary_prompt = PromptTemplate(
-    template="Write a one-line summary of the following report:\n\n{report}",
-    input_variables=["report"],
+report_summary_prompt = PromptTemplate.from_template(
+    "Write a one-line summary of the following report:\n\n{report}",
 )
 
 

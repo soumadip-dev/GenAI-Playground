@@ -34,17 +34,11 @@ class Person(BaseModel):
 person_output_parser = PydanticOutputParser(pydantic_object=Person)
 
 
-person_details_prompt = PromptTemplate(
-    template="""
-Give me the details of a fictional {nationality} person.
+person_details_prompt = PromptTemplate.from_template(
+    """Give me the details of a fictional {nationality} person.
 
-{format_instructions}
-""",
-    input_variables=["nationality"],
-    partial_variables={
-        "format_instructions": person_output_parser.get_format_instructions()
-    },
-)
+{format_instructions}"""
+).partial(format_instructions=person_output_parser.get_format_instructions())
 
 formatted_prompt = person_details_prompt.format(nationality="Indian")
 

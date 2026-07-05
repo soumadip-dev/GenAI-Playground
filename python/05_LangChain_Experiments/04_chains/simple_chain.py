@@ -13,12 +13,9 @@ chat_model = ChatGroq(
     temperature=0.5,
 )
 
-facts_prompt = PromptTemplate(
-    template=(
-        "Generate five interesting facts about {topic} in plain text format. "
-        "Each fact should be a single sentence."
-    ),
-    input_variables=["topic"],
+facts_prompt = PromptTemplate.from_template(
+    "Generate five interesting facts about {topic} in plain text format. "
+    "Each fact should be a single sentence."
 )
 
 string_output_parser = StrOutputParser()

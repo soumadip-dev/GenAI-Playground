@@ -45,8 +45,7 @@ class FeedbackSentiment(BaseModel):
 sentiment_output_parser = PydanticOutputParser(pydantic_object=FeedbackSentiment)
 
 # Prompt 1: Sentiment Classification
-sentiment_classification_prompt = PromptTemplate(
-    template="""
+sentiment_classification_prompt = PromptTemplate.from_template("""
 You are a sentiment analysis assistant.
 
 Analyze the following user feedback and determine whether its sentiment is
@@ -56,12 +55,8 @@ Feedback:
 {feedback_text}
 
 {format_instructions}
-""",
-    input_variables=["feedback_text"],
-    partial_variables={
-        "format_instructions": sentiment_output_parser.get_format_instructions()
-    },
-)
+""").partial(format_instructions=sentiment_output_parser.get_format_instructions())
+
 # -----------------------------------------------------------------------------
 # Chain to classify the sentiment
 # -----------------------------------------------------------------------------
@@ -70,8 +65,7 @@ sentiment_classifier_chain = (
 )
 
 # Prompt 2: Response for Positive Feedback
-positive_feedback_prompt = PromptTemplate(
-    template="""
+positive_feedback_prompt = PromptTemplate.from_template("""
 You are a customer support assistant.
 
 Write an appropriate response to the following positive feedback.
@@ -85,13 +79,10 @@ Requirements:
 - Respond in plain text only.
 - Do not use Markdown or HTML.
 - Keep the response within two lines.
-""",
-    input_variables=["feedback"],
-)
+""")
 
 # Prompt 3: Response for Negative Feedback
-negative_feedback_prompt = PromptTemplate(
-    template="""
+negative_feedback_prompt = PromptTemplate.from_template("""
 You are a customer support assistant.
 
 Write an appropriate response to the following negative feedback.
@@ -105,9 +96,7 @@ Requirements:
 - Respond in plain text only.
 - Do not use Markdown or HTML.
 - Keep the response within two lines.
-""",
-    input_variables=["feedback"],
-)
+""")
 
 # -----------------------------------------------------------------------------
 # Conditional Branch

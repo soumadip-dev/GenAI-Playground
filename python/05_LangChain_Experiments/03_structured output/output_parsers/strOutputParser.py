@@ -28,15 +28,13 @@ chat_model = ChatHuggingFace(llm=language_model)
 # Prompt Templates
 
 # Prompt 1: Generate a detailed report about the given topic
-detailed_report_prompt = PromptTemplate(
-    template="Write a detailed report about the following topic: {topic}",
-    input_variables=["topic"],
+detailed_report_prompt = PromptTemplate.from_template(
+    "Write a detailed report about the following topic: {topic}",
 )
 
 # Prompt 2: Summarize the generated report in one line
-summary_prompt = PromptTemplate(
-    template="Write a one-line summary of the following report:\n\n{detailed_report}",
-    input_variables=["detailed_report"],
+summary_prompt = PromptTemplate.from_template(
+    "Write a one-line summary of the following report:\n\n{detailed_report}"
 )
 
 # Output Parser: Converts the model's response into a plain Python string.

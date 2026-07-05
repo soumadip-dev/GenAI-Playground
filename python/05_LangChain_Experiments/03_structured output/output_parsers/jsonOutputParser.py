@@ -27,17 +27,10 @@ chat_model = ChatHuggingFace(llm=language_model)
 
 json_output_parser = JsonOutputParser()
 
-person_details_prompt = PromptTemplate(
-    template="""
+person_details_prompt = PromptTemplate.from_template("""
 Give me the name, age, and city of a fictional Indian person.
-
 {format_instructions}
-""",
-    input_variables=[],
-    partial_variables={
-        "format_instructions": json_output_parser.get_format_instructions()
-    },
-)
+""").partial(format_instructions=json_output_parser.get_format_instructions())
 
 formatted_prompt = person_details_prompt.format()
 

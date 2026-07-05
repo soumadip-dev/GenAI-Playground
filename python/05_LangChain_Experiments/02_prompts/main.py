@@ -1,10 +1,12 @@
+import json
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
-from langchain_core.prompts import PromptTemplate, load_prompt
+from langchain_core.prompts import PromptTemplate
+from langchain_core.load import load
 
 load_dotenv()
 
@@ -70,8 +72,10 @@ async def generate_summary(request: InputRequest):
 
 # After running prompt_generator.py, it will generate the prompt
 # and save it as template.json.
-# Now load the prompt from template.json using load_prompt().
-template = load_prompt("template.json")
+# Now load the prompt from template.json using load().
+with open("template.json", "r", encoding="utf-8") as f:
+    template_dict = json.load(f)
+template = load(template_dict)
 
 
 class SummaryRequest(BaseModel):

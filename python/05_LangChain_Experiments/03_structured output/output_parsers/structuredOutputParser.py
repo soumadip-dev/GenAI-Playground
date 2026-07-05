@@ -41,17 +41,11 @@ structured_output_parser = StructuredOutputParser.from_response_schemas(
 )
 
 
-facts_prompt = PromptTemplate(
-    template="""
+facts_prompt = PromptTemplate.from_template("""
 Give three facts about {topic}.
 
 {format_instructions}
-""",
-    input_variables=["topic"],
-    partial_variables={
-        "format_instructions": structured_output_parser.get_format_instructions()
-    },
-)
+""").partial(format_instructions=structured_output_parser.get_format_instructions())
 
 formatted_prompt = facts_prompt.format(topic="India")
 
