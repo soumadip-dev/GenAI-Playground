@@ -29,3 +29,9 @@ export const SummarizeInputSchema = z.object({
 export const SummarizeOutputSchema = z.object({
   summary: z.string().min(1, 'Summary content must not be empty.'),
 });
+
+export const searchInputSchema = z.object({
+  query: z.string().min(5, 'Query must be at least 5 characters long.'),
+});
+
+export type SearchInput = z.infer<typeof searchInputSchema>;

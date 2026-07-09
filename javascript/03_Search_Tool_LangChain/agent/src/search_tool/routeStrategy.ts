@@ -1,4 +1,7 @@
-//* Determines the route for the search query.
+import { RunnableLambda } from '@langchain/core/runnables';
+import { searchInputSchema } from '../schemas';
+
+//* Determines whether a query should be answered directly or by performing a web search.
 export function routeStrategy(query: string): 'web' | 'direct' {
   const normalizedQuery = query.toLowerCase().trim();
 
@@ -119,3 +122,13 @@ export function routeStrategy(query: string): 'web' | 'direct' {
     return 'direct';
   }
 }
+
+//* Determines the search mode and returns it together with the validated query.
+export const routerStep = RunnableLambda.from(async (input: { query: string }) => {
+  const { query } = searchInputSchema.parse(input);
+
+  return {
+    mode: routeStrategy(query),
+    query,
+  };
+});
