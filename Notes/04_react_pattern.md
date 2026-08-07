@@ -69,4 +69,4 @@ Here is how a practical implementation works step by step:
 - **2. Act & Observe:** The agent executes a Python tool, records the output, and feeds it back into Gemini.
 - **3. Finish:** Once sufficient context is gathered, Gemini exits the loop and synthesizes the final answer.
 
-> 📁 **Reference File:** [`07_react_pattern_career_agent.py`](https://www.google.com/search?q=../python/02_Ai_Api_Clients/07_react_pattern_career_agent.py)
+> 📁 **Reference File:** [`07_react_pattern_career_agent.py`](../python/02_Ai_Api_Clients/07_react_pattern_career_agent.py)
