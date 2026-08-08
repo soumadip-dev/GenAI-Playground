@@ -117,8 +117,8 @@ class CareerCoachAgent:
         self.plan = []
 
     def create_plan(self):
-        print("[bold blue]" + "=" * 60 + "[/bold blue]\n")
-        print("[bold white on blue]                   CREATING EXECUTION PLAN                    [/bold white on blue]")
+        print("[bold blue]" + "=" * 60 + "[/bold blue]")
+        print("[bold blue]                   CREATING EXECUTION PLAN                    [/bold  blue]")
         print("[bold blue]" + "=" * 60 + "[/bold blue]\n")
 
         prompt = f"""
@@ -176,7 +176,7 @@ PROJECT_TOOL
     # Execute plan
     def execute_plan(self):
         print("\n[bold magenta]" + "=" * 60 + "[/bold magenta]")
-        print("[bold white on magenta]                   EXECUTING SELECTED TOOLS                   [/bold white on magenta]")
+        print("[bold magenta]                   EXECUTING SELECTED TOOLS                   [/bold  magenta]")
         print("[bold magenta]" + "=" * 60 + "[/bold magenta]")
 
         step = 1
@@ -218,7 +218,7 @@ Formatting constraints:
         )
 
         print("\n[bold green]" + "=" * 60 + "[/bold green]")
-        print("[bold white on green]                      FINAL CAREER PLAN                       [/bold white on green]")
+        print("[bold  green]                      FINAL CAREER PLAN                       [/bold  green]")
         print("[bold green]" + "=" * 60 + "[/bold green]\n")
 
         return response.text
