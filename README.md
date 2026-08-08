@@ -6,7 +6,7 @@
 A personal collection of <b>hands-on projects</b>, <b>experiments</b>, and <b>learning notes</b> while exploring the world of Generative AI. 🤖
 </p>
 
-<img src="./javascript/02_Structured_Output_JSON/client/public/banner.jpg" alt="Banner" width="900">
+<img src="./javascript/02_structured_output/client/public/banner.jpg" alt="Banner" width="900">
 
 </div>
 
