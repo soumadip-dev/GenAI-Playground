@@ -16,7 +16,6 @@ A personal collection of <b>hands-on projects</b>, <b>experiments</b>, and <b>le
 - 📝 Prompt engineering
 - 📄 Structured outputs and JSON schemas
 - 🔗 API integrations
-- ⚡ FastAPI fundamentals
 - 🦜 LangChain and LangGraph
 - 🔍 Retrieval-Augmented Generation (RAG)
 - 🧠 Embeddings and vector databases
