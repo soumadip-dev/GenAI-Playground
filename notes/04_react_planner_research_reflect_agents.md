@@ -283,17 +283,98 @@ The Research Agent follows four main stages:
 
 ---
 
-## Planner vs Research Agent
+# Reflection Agent: Review → Critique → Improve
 
-| Agent              | Flow                                | Main Purpose                                       |
-| ------------------ | ----------------------------------- | -------------------------------------------------- |
-| **ReAct Agent**    | Think → Act → Observe → Repeat      | Iterative decision-making                          |
-| **Planner Agent**  | Plan → Execute → Final Answer       | Plan tool execution before running                 |
-| **Research Agent** | Plan → Gather → Analyze → Recommend | Gather evidence and analyze it before recommending |
+## What is a Reflection Agent?
+
+A **Reflection Agent** evaluates an already generated response instead of immediately accepting it as the final answer.
+
+It uses an iterative improvement process where one model-generated response is reviewed, weaknesses are identified, and the response is improved based on the feedback.
+
+$$\text{Draft} \longrightarrow \text{Review} \longrightarrow \text{Feedback} \longrightarrow \text{Improve} \longrightarrow \text{Final Report}$$
+
+---
+
+## How does a Reflection Agent work?
+
+The Reflection Agent follows three main stages:
+
+1. **Review:** The agent evaluates the generated draft using predefined criteria such as accuracy, completeness, clarity, practicality, and missing information.
+2. **Critique:** The agent identifies strengths, weaknesses, and actionable improvements without rewriting the original draft during the review stage.
+3. **Improve:** The agent uses the original draft and reviewer feedback to generate an improved final report.
+
+The key idea is that the first generated response is treated as a **draft** that can be evaluated and improved rather than immediately being considered final.
+
+---
+
+## Agent Lifecycle: `ReflectionAgent` Example
+
+```text
+                   ┌─────────────────────────────┐
+                   │      Research Agent         │
+                   │                             │
+                   │ Generate recommendations    │
+                   └──────────────┬──────────────┘
+                                  │
+                                  ▼
+                   ┌─────────────────────────────┐
+                   │          Draft Report       │
+                   └──────────────┬──────────────┘
+                                  │
+                                  ▼
+                   ┌─────────────────────────────┐
+                   │        1. review()          │
+                   │                             │
+                   │ Evaluate the draft          │
+                   │ using review criteria       │
+                   └──────────────┬──────────────┘
+                                  │
+                                  ▼
+                   ┌─────────────────────────────┐
+                   │       Reviewer Feedback     │
+                   │                             │
+                   │ Strengths                   │
+                   │ Weaknesses                  │
+                   │ Actionable Improvements     │
+                   └──────────────┬──────────────┘
+                                  │
+                                  ▼
+                   ┌─────────────────────────────┐
+                   │      2. improve_draft()     │
+                   │                             │
+                   │ Draft + Feedback            │
+                   │          ↓                  │
+                   │         Gemini              │
+                   └──────────────┬──────────────┘
+                                  │
+                                  ▼
+                   ┌─────────────────────────────┐
+                   │     Improved Final Report   │
+                   └─────────────────────────────┘
+```
+
+---
+
+## Simplified 3-Step Summary
+
+- **1. Review:** Evaluate the generated draft for accuracy, completeness, clarity, practicality, and missing information.
+- **2. Critique:** Identify strengths, weaknesses, and specific improvements without rewriting the draft.
+- **3. Improve:** Use the original draft and reviewer feedback to generate an improved final response.
+
+> 📁 **Reference File:** [`Reflection Agent`](../python/01_llm_api_and_agents/12_reflection_agent.py)
+
+---
+
+| Agent                | Flow                                | Main Purpose                                       |
+| -------------------- | ----------------------------------- | -------------------------------------------------- |
+| **ReAct Agent**      | Think → Act → Observe → Repeat      | Iterative decision-making                          |
+| **Planner Agent**    | Plan → Execute → Final Answer       | Plan tool execution before running                 |
+| **Research Agent**   | Plan → Gather → Analyze → Recommend | Gather evidence and analyze it before recommending |
+| **Reflection Agent** | Review → Critique → Improve         | Evaluate and improve an existing response          |
 
 ### Core Concept
 
-The three patterns progressively add structure:
+The four patterns progressively add structure:
 
 ```text
 ReAct
@@ -307,6 +388,10 @@ Plan → Execute → Final Answer
 Research
   ↓
 Plan → Gather Evidence → Analyze → Recommend
+
+Reflection
+  ↓
+Review → Critique → Improve
 ```
 
-The **Planner Agent** is useful when the required tools can be determined beforehand. The **Research Agent** goes one step further by introducing an explicit evidence-analysis phase before producing recommendations.
+The **ReAct Agent** focuses on iterative decision-making, the **Planner Agent** creates the complete execution plan before running tools, the **Research Agent** adds evidence gathering and analysis before making recommendations, and the **Reflection Agent** evaluates an existing response and improves it based on identified weaknesses.
