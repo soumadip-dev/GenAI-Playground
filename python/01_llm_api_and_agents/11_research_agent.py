@@ -146,7 +146,7 @@ PROJECT_TOOL
 SALARY_TOOL
 """
         response = gemini_client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.5-flash-lite",
             contents=prompt,
         )
 
@@ -200,7 +200,7 @@ Based on the evidence above, generate:
 Return the analysis as plain text without any markdown.(very short in 3 -4 sentences)
 """
         response = gemini_client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.5-flash-lite",
             contents=prompt,
         )
 
@@ -228,12 +228,13 @@ Based on the goal and analysis above, generate:
 Keep the reply short and reply in plain text format, not Markdown.(under 10 lines)
 """
         response = gemini_client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.5-flash-lite",
             contents=prompt,
         )
 
         print("[bold green]Final Recommendation[/bold green]")
         print(response.text)
+        return response.text
 
     # Run the full plan -> gather -> analyze -> recommend pipeline.
     def run(self):
@@ -252,7 +253,30 @@ Keep the reply short and reply in plain text format, not Markdown.(under 10 line
         print("[bold cyan]ANALYSIS:[/bold cyan]")
         print(analysis)
 
-        self.generate_recommendations(analysis)
+        final_recommendation = self.generate_recommendations(analysis)
+
+        return analysis, final_recommendation
+
+    # run with reflection
+    def run_reflection(self):
+        self.plan = self.create_research_plan()
+
+        print("[bold cyan]GENERATED SEQUENCE:[/bold cyan]")
+        if not self.plan:
+            print("[italic red]  No specific tools were selected by the Planner Agent.[/italic red]\n")
+        else:
+            for index, tool in enumerate(self.plan):
+                print(f"  [bold yellow][{index + 1}][/bold yellow] [bold cyan]{tool}[/bold cyan]")
+
+        self.gather_evidence()
+
+        analysis = self.analyze_evidence()
+        print("[bold cyan]ANALYSIS:[/bold cyan]")
+        print(analysis)
+
+        final_recommendation = self.generate_recommendations(analysis)
+
+        return analysis, final_recommendation
 
 
 if __name__ == "__main__":
