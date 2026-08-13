@@ -291,3 +291,4 @@ media/
 # FastAPI runtime
 
 *.pid
+multiagent
