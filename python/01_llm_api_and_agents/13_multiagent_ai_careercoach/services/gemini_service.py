@@ -25,7 +25,7 @@ class GeminiService:
     def generate_response(
         self,
         prompt: str,
-        config: Optional[Any],
+        config: Optional[Any] = None,
     ) -> Any:
         """
         Send a prompt to the Gemini API and return its response.
