@@ -13,6 +13,8 @@ Instructions:
 4. Keep the plan focused on the user's career goal.
 5. Do not explain each phase.
 6. Return only the execution plan.
+7. Keep the response short and concise.
+8. Return the response in plain text format, not Markdown.
 
 User Query:
 {user_query}

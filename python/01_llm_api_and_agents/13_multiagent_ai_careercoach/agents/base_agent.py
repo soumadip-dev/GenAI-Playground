@@ -94,7 +94,7 @@ class BaseAgent(ABC):
 
         agent_response = AgentResponse(
             agent_name=self.get_agent_name(),
-            output=gemini_response.content,
+            output=gemini_response.text,
         )
 
         self.memory.add(

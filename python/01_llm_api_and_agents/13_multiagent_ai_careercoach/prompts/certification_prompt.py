@@ -11,6 +11,8 @@ Instructions:
 2. Recommend intermediate-level certifications.
 3. Recommend advanced-level certifications.
 4. Keep the recommendations relevant to the user's career goal.
+5. Keep the response short and concise.
+6. Return the response in plain text format, not Markdown.
 
 User Goal:
 {user_query}

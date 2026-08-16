@@ -13,7 +13,10 @@ Instructions:
 4. Ensure the roadmap is complete.
 5. Improve the logical flow.
 6. Keep the original career goal and learning direction unchanged.
-7. Return only the improved roadmap.
+7. Do not introduce unrelated information.
+8. Return only the improved roadmap.
+9. Keep the response short and concise.
+10. Return the response in plain text format, not Markdown.
 
 Career Roadmap:
 {roadmap}

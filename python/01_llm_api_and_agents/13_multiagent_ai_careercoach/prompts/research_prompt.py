@@ -13,6 +13,8 @@ Instructions:
 4. Mention relevant industry trends.
 5. Recommend hands-on projects.
 6. Organize the research clearly according to the execution plan.
+7. Keep the response short and concise.
+8. Return the response in plain text format, not Markdown.
 
 Planner Output:
 {planner_output}
