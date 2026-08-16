@@ -18,6 +18,4 @@ class Config:
     def validate() -> None:
         """Validate mandatory configurations"""
         if not Config.GEMINI_API_KEY:
-            raise ValueError(
-                "GEMINI_API_KEY is missing. Please check your .env file."
-            )
+            raise ValueError("GEMINI_API_KEY is missing. Please check your .env file.")
