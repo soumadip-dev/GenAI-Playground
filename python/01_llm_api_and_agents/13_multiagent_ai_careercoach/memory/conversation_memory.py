@@ -62,12 +62,16 @@ class ConversationMemory:
         """
         self._messages.clear()
 
-    def display(self) -> None:
+    def display(self, max_length: int = 120) -> None:
         """
         Display the current conversation history using Rich.
 
         This method is primarily useful for debugging and inspecting
         the current state of the conversation memory.
+
+        Args:
+            max_length: The maximum length of each message to display.
+                Defaults to 120 characters.
         """
         separator = "=" * 60
 
@@ -79,9 +83,7 @@ class ConversationMemory:
             print("[italic yellow]No conversation history available.[/italic yellow]")
         else:
             for message in self._messages:
-                if message.startswith("User:"):
-                    print(f"[bold cyan]{message}[/bold cyan]")
-                else:
-                    print(f"[bold green]{message}[/bold green]")
+                preview = message[:max_length] + "..."
+                print(f"[cyan]{preview}[/cyan]")
 
         print(f"[dim]{separator}[/dim]\n")
