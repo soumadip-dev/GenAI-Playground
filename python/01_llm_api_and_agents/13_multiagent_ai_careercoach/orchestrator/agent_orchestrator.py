@@ -10,6 +10,7 @@ from rich import print
 
 from agents.base_agent import BaseAgent
 from memory.shared_memory import SharedMemory
+from memory.conversation_memory import ConversationMemory
 
 
 class AgentOrchestrator:
@@ -17,7 +18,11 @@ class AgentOrchestrator:
     Manage and execute AI agents in sequence.
     """
 
-    def __init__(self, memory: SharedMemory) -> None:
+    def __init__(
+        self,
+        memory: SharedMemory,
+        conversation_memory: ConversationMemory,
+    ) -> None:
         """
         Initialize the agent orchestrator.
 
@@ -25,6 +30,7 @@ class AgentOrchestrator:
             memory: Shared memory accessible by all agents.
         """
         self.memory = memory
+        self.conversation_memory = conversation_memory
         self.agents: List[BaseAgent] = []
 
     def register(self, agent: BaseAgent) -> None:
