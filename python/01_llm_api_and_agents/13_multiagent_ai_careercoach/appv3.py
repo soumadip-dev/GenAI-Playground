@@ -19,6 +19,7 @@ from memory.conversation_memory import ConversationMemory
 from memory.shared_memory import SharedMemory
 from orchestrator.agent_orchestrator import AgentOrchestrator
 from services.gemini_service import GeminiService
+from knowledge.knowledge_base import KnowledgeBase
 
 
 def main() -> None:
@@ -45,6 +46,7 @@ def main() -> None:
     # Initialize shared conversation memory and the Gemini service.
     conversation_memory = ConversationMemory()
     gemini_service = GeminiService()
+    knowledge_base = KnowledgeBase("data/career_knowledge.json")
 
     while True:
         # Display the application header.
@@ -80,27 +82,19 @@ def main() -> None:
         # Create all agents using the shared memory,
         # conversation memory, and Gemini service.
         planner = PlannerAgent(
-            memory,
-            conversation_memory,
-            gemini_service,
+            memory, conversation_memory, gemini_service, knowledge_base
         )
 
         researcher = ResearchAgent(
-            memory,
-            conversation_memory,
-            gemini_service,
+            memory, conversation_memory, gemini_service, knowledge_base
         )
 
         writer = WriterAgent(
-            memory,
-            conversation_memory,
-            gemini_service,
+            memory, conversation_memory, gemini_service, knowledge_base
         )
 
         reviewer = ReviewerAgent(
-            memory,
-            conversation_memory,
-            gemini_service,
+            memory, conversation_memory, gemini_service, knowledge_base
         )
 
         # Create the orchestrator and initialize it with
