@@ -94,9 +94,6 @@ class KnowledgeBase:
         # Normalize the query for consistent keyword matching.
         normalized_query = query.lower().replace("-", " ").replace("_", " ").strip()
 
-        print(f"[bold]Query:[/bold] {query}")
-        print(f"[dim]Normalized query: {normalized_query}[/dim]")
-
         # Check each knowledge-base entry against the normalized query.
         for key, value in self._knowledge.items():
             normalized_key = key.lower().replace("-", " ").replace("_", " ").strip()
