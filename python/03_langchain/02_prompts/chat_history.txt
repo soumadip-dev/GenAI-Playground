@@ -1,0 +1,4 @@
+Human: Hi, I ordered an item last week (Order #12345) and requested a cancellation.
+AI: Hello! I see that Order #12345 was successfully canceled on Monday, August 24.
+Human: Great, how long does the refund take to process?
+AI: Refunds typically take 3 to 5 business days to post back to your original payment method.

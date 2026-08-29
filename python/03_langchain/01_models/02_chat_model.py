@@ -6,8 +6,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 load_dotenv()
 
 # Retrieve configurations from environment
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-MODEL_NAME = os.getenv("MODEL_NAME")
+google_api_key = os.getenv("GEMINI_API_KEY")
+llm_model_name = "gemini-3.5-flash-lite"
 
 # Verify API key existence
 if not GEMINI_API_KEY:
