@@ -121,6 +121,39 @@ Chat prompts typically organize input into three primary message roles:
 
 > 📁 **Reference File:** [`Messages Placeholder`](../python/03_langchain/02_prompts/03_messages_placeholder.py)
 
+---
+
+> [!NOTE]
+>
+> ### Structured Output and Output Parsers
+>
+> LLMs can return responses in different formats. When integrating an LLM with an application, we often need the response in a predictable and structured format.
+>
+> There are two common approaches:
+>
+> **1. Models that support structured output**
+>
+> If the model supports structured output, we can use the `with_structured_output()` method.
+>
+> Common schema options include:
+>
+> - **TypedDict:** Provides type hints without runtime data validation. It relies more on the LLM to return the correct data
+> - **Pydantic:** Provides data validation and automatic type conversion. It is similar to using **Zod** in TypeScript.
+> - **JSON Schema:** Defines the expected JSON structure without requiring an additional Python schema library.
+>
+> **2. Models that do not support structured output**
+>
+> For models that do not natively support structured output, we can use **Output Parsers** to parse the model's response.
+>
+> Common output parsers include:
+>
+> - **`StrOutputParser`:** Parses the LLM response as a plain string.
+> - **`JsonOutputParser`:** Parses the LLM response as JSON.
+> - **`StructuredOutputParser`:** Parses the LLM response according to a predefined structure.
+> - **`PydanticOutputParser`:** Parses the LLM response into a Pydantic model.
+
+---
+
 ### 3. Chains
 
 Chains allow us to combine models, prompts, and other components to create a cohesive flow of interactions. They act as pipelines that define how different components work together.
