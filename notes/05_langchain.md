@@ -137,9 +137,9 @@ Chat prompts typically organize input into three primary message roles:
 >
 > Common schema options include:
 >
-> - **TypedDict:** Provides type hints without runtime data validation. It relies more on the LLM to return the correct data
-> - **Pydantic:** Provides data validation and automatic type conversion. It is similar to using **Zod** in TypeScript.
-> - **JSON Schema:** Defines the expected JSON structure without requiring an additional Python schema library.
+> - **TypedDict:** Provides type hints without runtime data validation. It relies on the LLM to return data that matches the expected structure. 📁 [`TypedDict`](../python/03_langchain/03_output/01_structured_output/01_typed_dict.py)
+> - **Pydantic:** Provides data validation and automatic type conversion. It is similar to using **Zod** in TypeScript. 📁 [`Pydantic`](../python/03_langchain/03_output/01_structured_output/02_pydantic.py)
+> - **JSON Schema:** Defines the expected JSON structure without requiring an additional Python schema library. 📁 [`JSON Schema`](../python/03_langchain/03_output/01_structured_output/03_json_schema.py)
 >
 > **2. Models that do not support structured output**
 >
@@ -147,10 +147,9 @@ Chat prompts typically organize input into three primary message roles:
 >
 > Common output parsers include:
 >
-> - **`StrOutputParser`:** Parses the LLM response as a plain string.
-> - **`JsonOutputParser`:** Parses the LLM response as JSON.
-> - **`StructuredOutputParser`:** Parses the LLM response according to a predefined structure.
-> - **`PydanticOutputParser`:** Parses the LLM response into a Pydantic model.
+> - **`StrOutputParser`:** Parses the LLM response as a plain string. 📁 [`String Parser`](../python/03_langchain/03_output/02_output_parsers/01_string_parser.py)
+> - **`JsonOutputParser`:** Parses the LLM response as JSON. 📁 [`JSON Parser`](../python/03_langchain/03_output/02_output_parsers/02_json_parser.py)
+> - **`PydanticOutputParser`:** Parses the LLM response into a Pydantic model. 📁 [`Pydantic Parser`](../python/03_langchain/03_output/02_output_parsers/03_pydantic_parser.py)
 
 ---
 
