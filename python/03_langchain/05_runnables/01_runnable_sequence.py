@@ -1,34 +1,41 @@
-# -----------------------------------------------------------------------------
-# RunnableSequence Example using LangChain
-#
-# Workflow:
-# 1. Generate a joke about a given topic.
-# 2. Parse the joke as plain text.
-# 3. Explain the generated joke.
-# 4. Parse and display the explanation.
-# -----------------------------------------------------------------------------
+import os
 
 from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableSequence
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Load environment variables from the .env file
 load_dotenv()
 
-chat_model = ChatGroq(
-    model="llama-3.1-8b-instant",
+# Get and verify the Gemini API key
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+
+if not gemini_api_key:
+    raise ValueError("GEMINI_API_KEY environment variable is missing in .env file.")
+
+# LLM configuration
+gemini_model_name = "gemini-3.5-flash-lite"
+
+# Initialize the Gemini LLM
+llm = ChatGoogleGenerativeAI(
+    model=gemini_model_name,
     temperature=0.5,
+    google_api_key=gemini_api_key,
 )
 
-# Prompt 1: Generate a joke about the given topic
+# =========================================================
+# Runnable sequences
+# =========================================================
+
+# Create a prompt template for generating a joke about a given topic
 joke_generation_prompt = PromptTemplate.from_template("""
 Write a funny and family-friendly joke about {topic}.
 Return only the joke in plain text.
 """)
 
-# Prompt 2: Explain the generated joke
+# Create a prompt template for explaining the generated joke
 joke_explanation_prompt = PromptTemplate.from_template("""
 Explain the following joke in simple and easy-to-understand language.
 
@@ -38,7 +45,8 @@ Joke:
 Return only the explanation in plain text.
 """)
 
-string_output_parser = StrOutputParser()
+# Create an output parser that converts the LLM response into a plain string
+output_parser = StrOutputParser()
 
 # -----------------------------------------------------------------------------
 # Build the RunnableSequence
@@ -60,28 +68,31 @@ string_output_parser = StrOutputParser()
 # -----------------------------------------------------------------------------
 joke_explanation_chain = RunnableSequence(
     joke_generation_prompt,
-    chat_model,
-    string_output_parser,
+    llm,
+    output_parser,
     joke_explanation_prompt,
-    chat_model,
-    string_output_parser,
+    llm,
+    output_parser,
 )
 
 # Equivalent pipe syntax:
 # joke_explanation_chain = (
 #     joke_generation_prompt
-#     | chat_model
-#     | string_output_parser
+#     | llm
+#     | output_parser
 #     | joke_explanation_prompt
-#     | chat_model
-#     | string_output_parser
+#     | llm
+#     | output_parser
 # )
 
 # Execute the chain
-result = joke_explanation_chain.invoke(
+response = joke_explanation_chain.invoke(
     {
         "topic": "JavaScript",
     }
 )
 
-print(result)
+# Display output
+print("=" * 70)
+print(response)
+print("=" * 70)
