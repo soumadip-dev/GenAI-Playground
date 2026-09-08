@@ -32,7 +32,7 @@ chat_model = ChatGoogleGenerativeAI(
 )
 
 # ============================================================================================
-# RunnablePassthrough + RunnableParallel Example
+# Runnable Passthrough
 #
 # Workflow:
 # 1. Generate a joke about the given topic.

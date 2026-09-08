@@ -34,7 +34,7 @@ string_output_parser = StrOutputParser()
 
 
 # =========================================================
-# Parallel Chain
+# Runnable Parallel
 # =========================================================
 #                  ┌── Generate Tweet Chain ────────────┐
 # Topic ───────────┤                                    ├── {"tweet", "linkedin"}
