@@ -1,86 +1,124 @@
-# -----------------------------------------------------------------------------
-# RunnableBranch Example using LangChain
-#
-# Workflow:
-# 1. Accept a user query.
-# 2. Determine whether the query is related to Mathematics, Science, or General
-#    knowledge using RunnableBranch.
-# 3. Route the query to the appropriate prompt.
-# 4. Generate a response using the language model.
-# -----------------------------------------------------------------------------
-from dotenv import load_dotenv
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnableBranch, RunnableSequence
-from langchain_groq import ChatGroq
+import os
+from typing import Literal
 
+from dotenv import load_dotenv
+from langchain_core.output_parsers import PydanticOutputParser, StrOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnableBranch, RunnableLambda, RunnableSequence
+from langchain_google_genai import ChatGoogleGenerativeAI
+from pydantic import BaseModel, Field
+
+# Load environment variables from the .env file.
 load_dotenv()
 
-chat_model = ChatGroq(
-    model="llama-3.1-8b-instant",
+
+# Retrieve and validate the Gemini API key.
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+
+if not gemini_api_key:
+    raise ValueError("GEMINI_API_KEY environment variable is missing in .env file.")
+
+
+# Configure the Gemini chat model.
+gemini_model_name = "gemini-3.5-flash-lite"
+
+chat_model = ChatGoogleGenerativeAI(
+    model=gemini_model_name,
     temperature=0.5,
+    google_api_key=gemini_api_key,
 )
 
-string_output_parser = StrOutputParser()
 
-# Prompt for mathematics-related questions
-math_prompt = PromptTemplate.from_template("""
-You are an expert Mathematics tutor.
+# =================================================================================
+# RunnableBranch
+#
+# Workflow:
+# 1. Accept a user question.
+# 2. Classify the question as either "math" or "general".
+# 3. Parse the classification into a Pydantic model.
+# 4. Use RunnableBranch to choose the appropriate response.
+# 5. Return a message indicating the type of question asked.
+#
+#                         ┌── Math ──────── "You asked a math question."
+# Question ── Classify ───┤
+#                         └── General ───── "You asked a general question."
+#
+# =================================================================================
 
-Answer the following mathematics question clearly and accurately.
 
-Question:
-{query}
+# Pydantic model for the question classification result.
+class QuestionClassification(BaseModel):
+    classification: Literal["math", "general"] = Field(
+        description="The category of the question: 'math' for mathematics-related questions or 'general' for all other questions."
+    )
 
-- Return the answer in plain text.
-- Do not use Markdown or HTML.
-""")
 
-# Prompt for science-related questions
-science_prompt = PromptTemplate.from_template("""
-You are an expert Science tutor.
-
-Answer the following science question clearly and accurately.
-
-Question:
-{query}
-
-- Return the answer in plain text.
-- Do not use Markdown or HTML.
-""")
-
-# Prompt for all other questions
-general_prompt = PromptTemplate.from_template("""
-You are a helpful AI assistant.
-
-Answer the following question clearly and concisely.
-
-Question:
-{query}
-
-- Return the answer in plain text.
-- Do not use Markdown or HTML.
-""")
-
-query_router = RunnableBranch(
-    (
-        lambda x: "math" in x["query"].lower(),
-        RunnableSequence(math_prompt, chat_model, string_output_parser),
-    ),
-    (
-        lambda x: "science" in x["query"].lower(),
-        RunnableSequence(science_prompt, chat_model, string_output_parser),
-    ),
-    RunnableSequence(general_prompt, chat_model, string_output_parser),
+# Parser for the structured classification output.
+classification_output_parser = PydanticOutputParser(
+    pydantic_object=QuestionClassification
 )
 
-result = query_router.invoke(
+
+# Get formatting instructions required by the Pydantic output parser.
+classification_format_instructions = (
+    classification_output_parser.get_format_instructions()
+)
+
+
+# Prompt for classifying the user's question.
+classification_prompt = PromptTemplate.from_template("""
+Classify the following question into one of these categories:
+
+- "math" — if the question is related to mathematics.
+- "general" — for all other questions.
+
+Question:
+{query}
+
+{format_instructions}
+""").partial(format_instructions=classification_format_instructions)
+
+
+# Chain for classifying the question:
+# PromptTemplate → Chat Model → PydanticOutputParser
+classification_chain = RunnableSequence(
+    classification_prompt,
+    chat_model,
+    classification_output_parser,
+)
+
+
+# Route the classification to the appropriate response.
+question_router = RunnableBranch(
+    (
+        lambda classification: classification.classification == "math",
+        RunnableLambda(lambda _: "You asked a math question."),
+    ),
+    (
+        lambda classification: classification.classification == "general",
+        RunnableLambda(lambda _: "You asked a general question."),
+    ),
+    RunnableLambda(lambda _: "Unable to classify the question."),
+)
+
+
+# Complete workflow:
+# Question → Classification Chain → RunnableBranch
+final_chain = RunnableSequence(
+    classification_chain,
+    question_router,
+)
+
+
+# Invoke the chain with a question.
+response = final_chain.invoke(
     {
         "query": "What is the square root of 2?",
     }
 )
 
-print(result)
 
-
-query_router.get_graph().print_ascii()
+# Display the result.
+print("=" * 70)
+print(response)
+print("=" * 70)
