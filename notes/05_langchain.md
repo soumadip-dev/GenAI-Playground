@@ -159,107 +159,220 @@ Chains combine prompts, models, output parsers, and other LangChain components i
 
 They work like a **pipeline**, where the output of one component is passed to the next.
 
-#### LCEL (LangChain Expression Language)
+#### Runnables
 
-**LCEL (LangChain Expression Language)** is a declarative way to compose LangChain components into **reusable and composable pipelines**.
+To make LangChain components easier to combine, LangChain introduced **Runnables** as a common building block for workflows. Components such as **prompts, models, output parsers, and retrievers** can work together as Runnables.
 
-Instead of manually calling each component and passing its output to the next component, LCEL allows components to be connected using the pipe (`|`) operator.
+Runnables can also be combined with other Runnables to create different types of workflows, such as **sequential, parallel, conditional, and custom processing flows**.
 
-#### Chain Types
+The most commonly used Runnable primitives are:
 
-**1. Simple Chain**
+**1. RunnableSequence**
 
-A simple chain represents a straightforward linear pipeline where components execute in a fixed order.
+`RunnableSequence` executes multiple Runnables **one after another**, passing the output of each step to the next.
 
-```text
-Input → Prompt → LLM → Output Parser → Output
+```mermaid
+flowchart LR
+    A[Input] --> B[Prompt]
+    B --> C[Model]
+    C --> D[Parser]
+    D --> E[Output]
 ```
 
-> 📁 [`Simple Chain`](../python/03_langchain/04_chains/01_simple_chain.py)
+For example:
 
-**2. Sequential Chain**
+```python
+from langchain_core.runnables import RunnableSequence
 
-A sequential chain consists of multiple steps executed one after another. The output from an earlier step is passed to the next step as its input.
+chain = RunnableSequence(
+    prompt,
+    model,
+    parser
+)
 
-```text
-Input
-  ↓
-Prompt → LLM → Parser
-  ↓
-Next Prompt → LLM → Parser
-  ↓
-Final Output
+result = chain.invoke({"question": "What is AI?"})
 ```
 
-This is useful when a task naturally consists of multiple dependent stages, such as **generate → summarize**.
+It is useful for building workflows where each step depends on the result of the previous step.
 
-> 📁 [`Sequential Chain`](../python/03_langchain/04_chains/02_sequential_chain.py)
-
-**3. Parallel Chain**
-
-A parallel chain executes multiple independent operations using the same input concurrently. In LCEL, `RunnableParallel` is used to run multiple runnables in parallel and collect their results into a single output.
-
-```text
-                 ┌──→ Chain A ──┐
-Input ───────────┤              ├──→ Next Step
-                 └──→ Chain B ──┘
-```
-
-This is useful when multiple pieces of information can be generated independently, such as creating **study notes and a quiz** from the same document.
-
-> 📁 [`Parallel Chain`](../python/03_langchain/04_chains/03_parallel_chain.py)
-
-**4. Conditional Chain**
-
-A conditional chain selects which component or chain to execute based on a condition.
-
-```text
-Input
-  ↓
-Classification / Condition
-  ↓
-┌───────────────┬───────────────┐
-│ Condition A   │ Condition B   │
-↓               ↓               │
-│ Chain A       │ Chain B       │
-└───────────────┴───────────────┘
-          ↓
-      Final Output
-```
-
-This is useful when different inputs require different processing paths,LangChain provides `RunnableBranch` for implementing conditional routing and `RunnableLambda` for custom Python logic within a runnable pipeline.
-
-> 📁 [`Conditional Chain`](../python/03_langchain/04_chains/04_conditional_chain.py)
+📁 [`Runnable Sequence`](../python/03_langchain/05_runnables/01_runnable_sequence.py)
 
 ---
 
-### 4. Memory
+**2. RunnableParallel**
 
-LLM API calls are stateless. Therefore, we need to store the state of a conversation to maintain context across interactions. This is where memory comes in.
+`RunnableParallel` executes multiple Runnables **independently and concurrently** using the same input. The results are returned together as a dictionary.
 
-Frequently used types of memory:
-
-- **ConversationBufferMemory:** Stores a transcript of the conversation. It is useful for short conversations but can grow large quickly.
-
-- **ConversationBufferWindowMemory:** Keeps only the last N interactions to avoid excessive token usage.
-
-- **Custom Memory:** For advanced use cases, you can store specialized state, such as user preferences or important facts, in a custom memory class.
-
-### 5. Indexes
-
-Indexes connect your application to external knowledge sources, such as PDFs, websites, or databases.
-
-They typically involve four components:
-
-- **Document Loader**
-- **Text Splitter**
-- **Vector Store**
-- **Retriever**
-
-### 6. Agents
-
-Agents use a language model to decide which actions or tools to use to accomplish a given task. They can dynamically determine the steps required instead of following a fixed sequence.
-
+```mermaid
+flowchart LR
+    I[Input] --> A[Chain A]
+    I --> B[Chain B]
+    A --> O[Combined Output]
+    B --> O
 ```
 
+For example:
+
+```python
+from langchain_core.runnables import RunnableParallel
+
+parallel = RunnableParallel(
+    {
+        "summary": summary_chain,
+        "sentiment": sentiment_chain,
+    }
+)
+
+result = parallel.invoke({"text": "LangChain is useful for AI applications."})
 ```
+
+This is useful when multiple independent operations need to be performed on the same input.
+
+📁 [`Runnable Parallel`](../python/03_langchain/05_runnables/02_runnable_parallel.py)
+
+---
+
+**3. RunnablePassthrough**
+
+`RunnablePassthrough` passes the input through **without modifying it**.
+
+It is useful when the original input needs to be preserved while another Runnable processes the same data.
+
+```mermaid
+flowchart LR
+    I[Input] --> P[RunnableParallel]
+
+    P --> O[Original<br/>RunnablePassthrough]
+    P --> R[Processing Chain]
+
+    O --> C[Combined Output]
+    R --> C
+```
+
+```python
+from langchain_core.runnables import RunnableParallel, RunnablePassthrough
+
+chain = RunnableParallel(
+    {
+        "original": RunnablePassthrough(),
+        "processed": processing_chain,
+    }
+)
+
+result = chain.invoke(input)
+```
+
+The output contains both the original input and the processed result.
+
+📁 [`Runnable Passthrough`](../python/03_langchain/05_runnables/03_runnable_passthrough.py)
+
+---
+
+**4. RunnableLambda**
+
+`RunnableLambda` allows you to place a **custom Python function** inside a Runnable pipeline.
+
+It can be used for data transformation, preprocessing, filtering, post-processing, or other custom logic.
+
+```mermaid
+flowchart LR
+    A[Input Text] --> B[RunnableLambda]
+    B --> C["clean_text()"]
+    C --> D[Transformed Output]
+```
+
+```python
+from langchain_core.runnables import RunnableLambda
+
+def clean_text(text):
+    return text.strip().lower()
+
+cleaner = RunnableLambda(clean_text)
+```
+
+The function can then be combined with other Runnables as part of a workflow.
+
+📁 [`Runnable Lambda`](../python/03_langchain/05_runnables/04_runnable_lambda.py)
+
+---
+
+**5. RunnableBranch**
+
+`RunnableBranch` provides **conditional routing**. It evaluates conditions and sends the input to the appropriate Runnable.
+
+It works similarly to an `if / elif / else` structure.
+
+```mermaid
+flowchart TD
+    A[Input] --> B{Condition}
+
+    B -->|urgent| C[Urgent Chain]
+    B -->|feedback| D[Feedback Chain]
+    B -->|otherwise| E[Default Chain]
+
+    C --> F[Output]
+    D --> F
+    E --> F
+```
+
+For example:
+
+```python
+from langchain_core.runnables import RunnableBranch
+
+branch = RunnableBranch(
+    (lambda x: "urgent" in x.lower(), urgent_chain),
+    (lambda x: "feedback" in x.lower(), feedback_chain),
+    default_chain,
+)
+
+result = branch.invoke(user_input)
+```
+
+This is useful when different inputs need to follow different processing paths.
+
+📁 [`Runnable Branch`](../python/03_langchain/05_runnables/05_runnable_branch.py)
+
+---
+
+#### LCEL (LangChain Expression Language) & the Pipe Operator
+
+**LCEL (LangChain Expression Language)** is a declarative way to compose LangChain components into **reusable and composable pipelines**.
+
+Instead of manually creating a `RunnableSequence` to connect every step, LCEL allows Runnables to be connected using the **pipe (`|`) operator**.
+
+For example:
+
+```python
+chain = prompt | model | parser
+```
+
+This creates a sequential workflow:
+
+```text
+Prompt → Model → Parser
+```
+
+The pipe operator makes chains shorter, easier to read, and easier to compose.
+
+Under the hood, the pipe operator creates a **`RunnableSequence`**.
+
+Therefore, this:
+
+```python
+chain = prompt | model | parser
+```
+
+is conceptually equivalent to:
+
+```python
+chain = RunnableSequence(
+    prompt,
+    model,
+    parser
+)
+```
+
+📁 [`Simple Chain`](../python/03_langchain/04_chains/01_simple_chain.py)
+
+---
