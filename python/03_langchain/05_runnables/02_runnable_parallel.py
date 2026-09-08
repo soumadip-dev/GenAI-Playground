@@ -1,38 +1,44 @@
-# -----------------------------------------------------------------------------
-# RunnableParallel Example using LangChain
-#
-# Workflow:
-# 1. Accept a topic as input.
-# 2. Generate a tweet about the topic using the Groq model.
-# 3. Generate a LinkedIn post about the same topic using the Gemini model.
-# 4. Execute both tasks in parallel.
-# 5. Display both generated outputs.
-# -----------------------------------------------------------------------------
+import os
 
 from dotenv import load_dotenv
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableParallel, RunnableSequence
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_groq import ChatGroq
 
 # Load environment variables from the .env file
 load_dotenv()
 
 
-# Model used for tweet generation
-groq_chat_model = ChatGroq(
-    model="llama-3.1-8b-instant",
+# Get the Gemini API key from the environment
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+
+if not gemini_api_key:
+    raise ValueError("GEMINI_API_KEY environment variable is missing.")
+
+
+# LLM configuration
+gemini_model_name = "gemini-3.5-flash-lite"
+
+
+# Initialize the Gemini LLM
+llm = ChatGoogleGenerativeAI(
+    model=gemini_model_name,
     temperature=0.5,
+    google_api_key=gemini_api_key,
 )
 
-# Model used for LinkedIn post generation
-gemini_chat_model = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash-lite",
-    temperature=0.5,
-)
 
+# Create a string output parser
 string_output_parser = StrOutputParser()
+
+
+# =========================================================
+# Parallel Chain
+# =========================================================
+#                  ┌── Generate Tweet Chain ────────────┐
+# Topic ───────────┤                                    ├── {"tweet", "linkedin"}
+#                  └── Generate LinkedIn Chain ─────────┘
 
 
 # Prompt for tweet generation
@@ -45,6 +51,7 @@ Requirements:
 - Do not use Markdown or HTML.
 """)
 
+
 # Prompt for LinkedIn post generation
 linkedin_post_prompt = PromptTemplate.from_template("""
 Generate a professional LinkedIn post about {topic}.
@@ -55,35 +62,25 @@ Requirements:
 - Do not use Markdown or HTML.
 """)
 
-# -----------------------------------------------------------------------------
-# Parallel Chain
-#
-#                Topic
-#                  │
-#        ┌─────────┴─────────┐
-#        │                   │
-#   Generate Tweet     Generate LinkedIn Post
-#      (Groq)                (Gemini)
-#        │                   │
-#        └─────────┬─────────┘
-#                  │
-#      {"tweet", "linkedin"}
-# -----------------------------------------------------------------------------
+
+# Run both generation chains in parallel
 social_media_generation_chain = RunnableParallel(
     {
         "tweet": RunnableSequence(
             tweet_generation_prompt,
-            groq_chat_model,
+            llm,
             string_output_parser,
         ),
         "linkedin": RunnableSequence(
             linkedin_post_prompt,
-            gemini_chat_model,
+            llm,
             string_output_parser,
         ),
     }
 )
 
+
+# Invoke the parallel chain with the input topic
 result = social_media_generation_chain.invoke(
     {
         "topic": "LangChain",
@@ -91,6 +88,8 @@ result = social_media_generation_chain.invoke(
 )
 
 
+# Display the generated results
+print("=" * 70)
 print("Tweet:\n")
 print(result["tweet"])
 
@@ -98,3 +97,4 @@ print("\n" + "-" * 60 + "\n")
 
 print("LinkedIn Post:\n")
 print(result["linkedin"])
+print("=" * 70)
