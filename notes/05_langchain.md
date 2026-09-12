@@ -376,3 +376,35 @@ chain = RunnableSequence(
 📁 [`Simple Chain`](../python/03_langchain/04_chains/01_simple_chain.py)
 
 ---
+
+### Context Management
+
+Context management is the process of controlling **what information is provided to the model** for each request.
+
+In a conversational application, the model does not automatically remember previous requests. The application must explicitly provide the relevant conversation history or other context.
+
+Common strategies include:
+
+- **Last N Messages:** Keep only the most recent messages to limit context size.
+- **Conversation Summarization:** Summarize older messages and keep the summary instead of the full history.
+- **Long-Term Memory:** Store important information separately and retrieve it when needed.
+
+> **Key Idea:** Context management is about deciding **what the model should see**, **how much it should see**, and **when it should see it**.
+
+```text
+User Request
+     ↓
+Context Management
+     ↓
+Relevant History / Memory / Retrieved Data
+     ↓
+Prompt
+     ↓
+LLM
+     ↓
+Response
+```
+
+> 📁 [`Context Management`](../python/03_langchain/06_context_management/main.py)
+
+---
