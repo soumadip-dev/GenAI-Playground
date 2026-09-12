@@ -178,8 +178,9 @@ print("Type 'exit' or 'quit' to stop.\n")
 
 
 while True:
+    print("=" * 70)
     user_input = input("👉 ")
-
+    print("=" * 70)
     # Exit the application when the user enters "exit" or "quit".
     if user_input.lower().strip() in {"exit", "quit"}:
         print("Goodbye!")
@@ -193,4 +194,6 @@ while True:
     ai_response = ask_ai(user_input)
 
     # Display the AI response.
-    print(f"AI: {ai_response}\n")
+    print("=" * 70)
+    print(f"🤖: {ai_response}\n")
+    print("=" * 70)

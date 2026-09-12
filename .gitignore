@@ -70,7 +70,6 @@ pids
 .env.production.local
 .env.local
 .env*.local
-.env*
 
 # caches
 
@@ -283,10 +282,7 @@ media/
 
 .vscode/
 
-# Environment variables
 
-.env
-.env.*
 
 # FastAPI runtime
 
