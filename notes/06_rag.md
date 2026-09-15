@@ -126,3 +126,151 @@ It uses **BeautifulSoup** under the hood to parse HTML and extract visible text.
 
 - Doesn't handle JavaScript-heavy pages well (use `SeleniumURLLoader` for that).
 - Loads only static content (what's in the HTML, not what loads after the page renders).
+
+---
+
+### Text Splitters
+
+Text splitting is the process of breaking large bodies of text (such as articles, PDFs, HTML pages, or books) into smaller, manageable pieces called **chunks** that an LLM can handle effectively.
+
+```mermaid
+graph TD
+
+    A[Large Text] --> B[Chunk 1]
+    A --> C[Chunk 2]
+    A --> D[Chunk 3]
+
+    style A fill:#4F46E5,color:#fff,stroke:#312E81,stroke-width:2px
+    style B fill:#10B981,color:#fff,stroke:#047857,stroke-width:2px
+    style C fill:#10B981,color:#fff,stroke:#047857,stroke-width:2px
+    style D fill:#10B981,color:#fff,stroke:#047857,stroke-width:2px
+```
+
+**Why split text?**
+
+- **Overcoming model limitations:** Many embedding models and language models have a maximum input size. Splitting allows us to process documents that would otherwise exceed these limits.
+
+- **Improving downstream tasks:** Text splitting improves nearly every LLM-powered task.
+
+| Task                | Why splitting helps                      |
+| :------------------ | :--------------------------------------- |
+| **Embedding**       | Short chunks yield more accurate vectors |
+| **Semantic search** | Results point to focused info, not noise |
+| **Summarization**   | Prevents hallucination and topic drift   |
+
+- **Optimizing computational resources:** Smaller chunks are more memory-efficient and allow better parallelization of processing tasks.
+
+**Types of text splitters**
+
+```mermaid
+graph TD
+
+    A[Text Splitters] --> B[Length Based]
+    A --> C[Text Structure Based]
+    A --> D[Document Structure Based]
+    A --> E[Semantic Meaning Based]
+
+    style A fill:#4F46E5,color:#fff,stroke:#312E81,stroke-width:2px
+    style B fill:#10B981,color:#fff,stroke:#047857,stroke-width:2px
+    style C fill:#F59E0B,color:#fff,stroke:#B45309,stroke-width:2px
+    style D fill:#3B82F6,color:#fff,stroke:#1D4ED8,stroke-width:2px
+    style E fill:#EC4899,color:#fff,stroke:#BE185D,stroke-width:2px
+```
+
+#### Length Based
+
+Splits text based on a specified length, such as the number of **characters, tokens, or words**.
+
+It is the simplest and fastest approach, but it is unaware of meaning or structure, so a chunk may end in the middle of a sentence.
+
+📁 [Length Based](../python/04_rag/text_splitters/01_length_based.py)
+
+#### Text Structure Based
+
+Splits text based on the natural structure of the text, using separators such as:
+
+- `"\n\n"` → paragraph
+- `"\n"` → line break
+- `" "` → word
+- `""` → character
+
+The splitter applies these separators **hierarchically**. It first tries the paragraph separator; if a resulting piece is still larger than the allowed chunk size, it tries the line-break separator, then the word separator, and finally the character separator. Adjacent small pieces are then merged back together as long as the combined size stays within the chunk limit.
+
+For example, suppose the text is:
+
+```text
+My name is Nitish
+I am 35 years old
+
+I live in Mumbai
+How are you?
+```
+
+and the **allowed chunk size is 10**.
+
+```mermaid
+graph TD
+
+    A["My name is Nitish<br/>I am 35 years old<br/><br/>I live in Mumbai<br/>How are you?"]
+
+    A -->|split on paragraph| B["My name is Nitish<br/>I am 35 years old<br/>&gt; 10"]
+    A -->|split on paragraph| C["I live in Mumbai<br/>How are you?<br/>&gt; 10"]
+
+    B -->|split on line break| D["My name is Nitish<br/>&gt; 10"]
+    B -->|split on line break| E["I am 35 years old<br/>&gt; 10"]
+
+    C -->|split on line break| F["I live in Mumbai<br/>&gt; 10"]
+    C -->|split on line break| G["How are you?<br/>&gt; 10"]
+
+    D -->|split on word| H["My(2)<br/>&lt; 10"]
+    D -->|split on word| I["name(4)<br/>&lt; 10"]
+    D -->|split on word| J["is(2)<br/>&lt; 10"]
+    D -->|split on word| K["Nitish(6)<br/>&lt; 10"]
+
+    H -->|merge| L["My name(6)<br/>&lt; 10"]
+    I -->|merge| L
+    L -->|merge| M["My name is(8)<br/>&lt; 10"]
+    J -->|merge| M
+    K -->|"merge not possible (8+6 &gt; 10)"| N["Nitish(6)<br/>&lt; 10"]
+
+    style A fill:#4F46E5,color:#fff,stroke:#312E81,stroke-width:2px
+
+    style B fill:#F59E0B,color:#fff,stroke:#B45309,stroke-width:2px
+    style C fill:#F59E0B,color:#fff,stroke:#B45309,stroke-width:2px
+    style D fill:#F59E0B,color:#fff,stroke:#B45309,stroke-width:2px
+    style E fill:#F59E0B,color:#fff,stroke:#B45309,stroke-width:2px
+    style F fill:#F59E0B,color:#fff,stroke:#B45309,stroke-width:2px
+    style G fill:#F59E0B,color:#fff,stroke:#B45309,stroke-width:2px
+
+    style H fill:#10B981,color:#fff,stroke:#047857,stroke-width:2px
+    style I fill:#10B981,color:#fff,stroke:#047857,stroke-width:2px
+    style J fill:#10B981,color:#fff,stroke:#047857,stroke-width:2px
+    style K fill:#10B981,color:#fff,stroke:#047857,stroke-width:2px
+
+    style L fill:#0EA5E9,color:#fff,stroke:#0369A1,stroke-width:2px
+    style M fill:#EF4444,color:#fff,stroke:#991B1B,stroke-width:2px
+    style N fill:#EF4444,color:#fff,stroke:#991B1B,stroke-width:2px
+```
+
+📁 [Text Structure Based](../python/04_rag/text_splitters/02_text_structured_based.py)
+
+#### Document Structure Based
+
+An extension of `RecursiveCharacterTextSplitter` (text-structure-based splitting) that swaps the generic separators for ones that match the syntax of a particular document type or programming language.
+
+- **Markdown:** splits on headings (`\n# `, `\n## `, `\n### `), code fences, horizontal rules, and list items, so each chunk maps to a logical section.
+- **Python:** splits on `\nclass `, `\ndef `, `\n\tdef `, and then on blank lines, so a class or function stays intact instead of being cut halfway through its body.
+
+The benefit is that chunks align with meaningful units of the document, which makes retrieval results far easier for an LLM to interpret.
+
+📁 [Markdown Splitting](../python/04_rag/text_splitters/03_document_structure_based/markdown_splitting.py)
+
+📁 [Python Code Splitting](../python/04_rag/text_splitters/03_document_structure_based/python_code_splitting.py)
+
+#### Semantic Meaning Based
+
+Splits text according to **meaning** rather than length or structure. The text is first divided into sentences, each sentence is embedded, and the similarity between consecutive embeddings is compared. When the similarity drops sharply — signalling a change of topic — a chunk boundary is created at that point.
+
+This produces topically coherent chunks, but it is slower and more expensive than the other methods because every sentence has to be embedded. In LangChain it is provided by `SemanticChunker`, which is still **experimental**.
+
+---
