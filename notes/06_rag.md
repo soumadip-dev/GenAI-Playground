@@ -274,3 +274,36 @@ Splits text according to **meaning** rather than length or structure. The text i
 This produces topically coherent chunks, but it is slower and more expensive than the other methods because every sentence has to be embedded. In LangChain it is provided by `SemanticChunker`, which is still **experimental**.
 
 ---
+
+### Vector Stores
+
+A **Vector Store** is a system used to **store and search numerical vectors**.
+
+Vectors are usually created from text, images, or other data using an **embedding model**.
+
+### Key Features
+
+1. **Storage** → Stores vectors along with their related information (metadata).
+2. **Similarity Search** → Finds vectors that are most similar to a given query.
+3. **Indexing** → Makes searching through a large number of vectors faster.
+4. **CRUD Operations** → Allows you to **Add, Read, Update, and Delete** vectors.
+
+### Use Cases
+
+1. **Semantic Search** → Find results based on meaning, not just keywords.
+2. **RAG** → Store document embeddings and retrieve relevant information for an LLM.
+3. **Recommendation Systems** → Find similar products, users, movies, etc.
+4. **Image/Multimedia Search** → Find images, audio, or videos that are similar to a query.
+
+### Vector Store vs Vector Database
+
+**Vector Store** is a general term for a system that stores and searches vectors.
+
+**Vector Database** is a more complete database system specifically designed to store, index, and search vectors at scale.
+
+**Simple way to remember:**
+
+> **Vector Store = Store and search vectors**
+> **Vector Database = Full database system built for vectors**
+
+---
