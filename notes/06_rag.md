@@ -226,7 +226,7 @@ Splits text based on a specified length, such as the number of **characters, tok
 
 It is the simplest and fastest approach, but it is unaware of meaning or structure, so a chunk may end in the middle of a sentence.
 
-📁 [Length Based](../python/04_rag/text_splitters/01_length_based.py)
+📁 [Length Based](../python/04_rag/02_text_splitters/01_length_based.py)
 
 ---
 
@@ -251,7 +251,7 @@ It usually works **hierarchically**:
 4. Finally, split by characters.
 5. Merge small pieces until the chunk size limit is reached.
 
-📁 [Text Structure Based](../python/04_rag/text_splitters/02_text_structured_based.py)
+📁 [Text Structure Based](../python/04_rag/02_text_splitters/02_text_structured_based.py)
 
 ---
 
@@ -287,9 +287,9 @@ This helps keep classes and functions together instead of splitting them in the 
 
 Chunks are more meaningful and easier for an LLM to understand and retrieve.
 
-📁 [Markdown Splitting](../python/04_rag/text_splitters/03_document_structure_based/markdown_splitting.py)
+📁 [Markdown Splitting](../python/04_rag/02_text_splitters/03_document_structure_based/markdown_splitting.py)
 
-📁 [Python Code Splitting](../python/04_rag/text_splitters/03_document_structure_based/python_code_splitting.py)
+📁 [Python Code Splitting](../python/04_rag/02_text_splitters/03_document_structure_based/python_code_splitting.py)
 
 ---
 
