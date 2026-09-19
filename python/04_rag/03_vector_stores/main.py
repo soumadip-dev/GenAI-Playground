@@ -1,26 +1,17 @@
-# Install required packages:
-#
-# pip install langchain chromadb langchain-google-genai langchain-community
-
-
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from dotenv import load_dotenv
+from rich import print
 
 load_dotenv()
 
-# ============================================================
-# 1. Create Gemini Embeddings
-# ============================================================
 
+# Create Gemini embedding model
 embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
 
 
-# ============================================================
-# 2. Create LangChain Documents
-# ============================================================
-
+# Create LangChain documents
 doc1 = Document(
     page_content=(
         "Virat Kohli is one of the most successful and consistent batsmen "
@@ -66,13 +57,10 @@ doc5 = Document(
     metadata={"team": "Chennai Super Kings"},
 )
 
-docs = [doc1, doc2, doc3, doc4, doc5]
+documents = [doc1, doc2, doc3, doc4, doc5]
 
 
-# ============================================================
-# 3. Create Chroma Vector Store
-# ============================================================
-
+# Create Chroma vector store
 vector_store = Chroma(
     collection_name="sample",
     embedding_function=embeddings,
@@ -80,126 +68,103 @@ vector_store = Chroma(
 )
 
 
-# ============================================================
-# 4. Add Documents
-# ============================================================
+# Add documents to the vector store
+document_ids = vector_store.add_documents(documents)
 
-ids = vector_store.add_documents(docs)
-
-print("\nDocument IDs:")
-print(ids)
+print("\n[bold red]Document IDs:[/bold red]")
+print(document_ids)
 
 
-# ============================================================
-# 5. View Documents
-# ============================================================
+# Retrieve and display stored documents, metadata, and embeddings
+documents_data = vector_store.get(include=["embeddings", "documents", "metadatas"])
 
-result = vector_store.get(include=["embeddings", "documents", "metadatas"])
-
-print("\nAll documents:")
-print(result)
+print("\n[bold cyan]Documents:[/bold cyan]")
+for document in documents_data["documents"]:
+    print(document, "\n")
 
 
-# ============================================================
-# 6. Similarity Search
-# ============================================================
+print("\n[bold cyan]Metadata:[/bold cyan]")
+for metadata in documents_data["metadatas"]:
+    print(metadata, "\n")
 
-results = vector_store.similarity_search(
+
+print("\n[bold cyan]Embeddings:[/bold cyan]")
+for embedding in documents_data["embeddings"]:
+    print(embedding, "\n")
+
+
+# Perform a similarity search
+# k specifies the number of most similar documents to return
+similar_documents = vector_store.similarity_search(
     query="Who among these are a bowler?",
     k=2,
 )
 
-print("\nSimilarity search:")
+print("\n[bold blue]Similarity Search Results:[/bold blue]")
+for document in similar_documents:
+    print(f"[green]{document}[/green]")
 
-for document in results:
-    print(document)
 
-
-# ============================================================
-# 7. Similarity Search With Score
-# ============================================================
-
-results_with_scores = vector_store.similarity_search_with_score(
+# Perform a similarity search and return similarity scores
+similar_documents_with_scores = vector_store.similarity_search_with_score(
     query="Who among these are a bowler?",
     k=2,
 )
 
-print("\nSimilarity search with scores:")
-
-for document, score in results_with_scores:
-    print(f"Score: {score}")
+print("\n[bold blue]Similarity Search Results with Scores:[/bold blue]")
+for document, score in similar_documents_with_scores:
+    print(f"[yellow]Score: {score}[/yellow]")
     print(document)
 
 
-# ============================================================
-# 8. Metadata Filtering
-# ============================================================
-
-# Do NOT use query="" with Gemini embeddings.
-# Use a normal query together with the metadata filter.
-
-filtered_results = vector_store.similarity_search(
+# Perform a similarity search with metadata filtering
+filtered_documents = vector_store.similarity_search(
     query="players",
     k=10,
     filter={"team": "Chennai Super Kings"},
 )
 
-print("\nFiltered documents:")
-
-for document in filtered_results:
+print("\n[bold blue]Filtered Documents:[/bold blue]")
+for document in filtered_documents:
     print(document)
 
 
-# ============================================================
-# 9. Update Document
-# ============================================================
-
+# Update an existing document
 updated_doc1 = Document(
     page_content=(
-        "Virat Kohli, the former captain of Royal Challengers Bangalore "
-        "(RCB), is renowned for his aggressive leadership and consistent "
-        "batting performances. He holds the record for the most runs in "
-        "IPL history, including multiple centuries in a single season. "
-        "Despite RCB not winning an IPL title under his captaincy, Kohli's "
-        "passion and fitness set a benchmark for the league. His ability "
-        "to chase targets and anchor innings has made him one of the most "
-        "dependable players in T20 cricket."
+        "Virat Kohli, the former captain of Royal Challengers Bangalore (RCB), "
+        "is renowned for his aggressive leadership and consistent batting "
+        "performances. He holds the record for the most runs in IPL history, "
+        "including multiple centuries in a single season. Despite RCB not "
+        "winning an IPL title under his captaincy, Kohli's passion and fitness "
+        "set a benchmark for the league. His ability to chase targets and "
+        "anchor innings has made him one of the most dependable players in "
+        "T20 cricket."
     ),
     metadata={"team": "Royal Challengers Bangalore"},
 )
 
-vector_store.update_documents(
-    ids=[ids[0]],
-    documents=[updated_doc1],
+vector_store.update_document(
+    document_id=document_ids[0],
+    document=updated_doc1,
 )
 
-print("\nDocument updated.")
+
+# Retrieve the documents after the update
+updated_documents_data = vector_store.get(include=["documents", "metadatas"])
+
+print("\n[bold cyan]Documents After Update:[/bold cyan]")
+for document in updated_documents_data["documents"]:
+    print(document, "\n")
 
 
-# ============================================================
-# 10. View Documents After Update
-# ============================================================
-
-result = vector_store.get(include=["embeddings", "documents", "metadatas"])
-
-print("\nDocuments after update:")
-print(result)
+# Delete the first document from the vector store
+vector_store.delete(ids=[document_ids[0]])
 
 
-# ============================================================
-# 11. Delete Document
-# ============================================================
+# Retrieve the documents after deletion
+remaining_documents_data = vector_store.get(include=["documents", "metadatas"])
 
-vector_store.delete(ids=[ids[0]])
-
-print("\nDocument deleted.")
-
-
-# ============================================================
-# 12. View Documents After Deletion
-# ============================================================
-
-result = vector_store.get(include=["embeddings", "documents", "metadatas"])
-
-print("\nDocuments after deletion:")
-print(result)
+print("\n[bold cyan]Documents After Deletion:[/bold cyan]")
+for document in remaining_documents_data["documents"]:
+    print(document, "\n")
