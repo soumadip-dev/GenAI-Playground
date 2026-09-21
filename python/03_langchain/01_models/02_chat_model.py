@@ -1,33 +1,42 @@
 import os
+
 from dotenv import load_dotenv
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-# Load environment variables from .env file
+# Load environment variables from .env file.
 load_dotenv()
 
-# Retrieve configurations from environment
-google_api_key = os.getenv("GEMINI_API_KEY")
+# Retrieve the Gemini API key.
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+
+# Set the model name.
 llm_model_name = "gemini-3.5-flash-lite"
 
-# Verify API key existence
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY environment variable is missing in .env file.")
+# Verify that the API key exists.
+if not gemini_api_key:
+    raise ValueError("GEMINI_API_KEY environment variable is missing.")
 
-# Initialize the ChatGoogleGenerativeAI model
+# Initialize the Gemini chat model.
 model = ChatGoogleGenerativeAI(
-    model=MODEL_NAME,
+    model=llm_model_name,
     temperature=0.5,
-    google_api_key=GEMINI_API_KEY,
+    google_api_key=gemini_api_key,
 )
 
 
-# Send query to the model
-prompt = "What is the capital of France?"
-response = model.invoke(prompt)
+# Create structured conversational messages.
+messages = [
+    SystemMessage(content="You are a helpful assistant that provides concise answers."),
+    HumanMessage(content="What is the capital of France?"),
+]
+
+# Invoke the chat model with the message sequence.
+response = model.invoke(messages)
 
 
 # Output
 print("=" * 70)
-print("MODEL RESPONSE:")
-print(response.content[0]["text"])  # type: ignore
+print("CHAT MODEL RESPONSE:")
+print(response.content)
 print("=" * 70)
