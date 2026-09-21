@@ -21,13 +21,6 @@ async function bootstrap() {
     });
   });
 
-  app.get('/', (_req: Request, res: Response) => {
-    return res.status(200).json({
-      status: 'ok',
-      message: 'Welcome to the GenAI Playground!',
-    });
-  });
-
   app.post('/ask', async (req: Request, res: Response) => {
     try {
       const { query } = req.body ?? {};

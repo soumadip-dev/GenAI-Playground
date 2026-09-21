@@ -1,5 +1,6 @@
 import { createChatModel } from './lc-model';
 import { AskResultSchema, type AskResult } from './schema';
+import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 
 export async function getStructuredAnswer(query: string): Promise<AskResult> {
   const { model } = createChatModel();
@@ -16,16 +17,9 @@ export async function getStructuredAnswer(query: string): Promise<AskResult> {
 
   const structuredModel = model.withStructuredOutput(AskResultSchema);
 
-  const response = await structuredModel.invoke([
-    {
-      role: 'system',
-      content: systemPrompt,
-    },
-    {
-      role: 'user',
-      content: userPrompt,
-    },
-  ]);
+  const messages = [new SystemMessage(systemPrompt), new HumanMessage(userPrompt)];
+
+  const response = await structuredModel.invoke(messages);
 
   return response;
 }

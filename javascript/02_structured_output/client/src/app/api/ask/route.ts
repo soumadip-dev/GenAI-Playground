@@ -19,7 +19,14 @@ export async function POST(request: Request) {
     return NextResponse.json(responseData, {
       status: backendResponse.status,
     });
-  } catch (error: unknown) {
-    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+  } catch (error) {
+    console.error('API /ask error:', error);
+
+    return NextResponse.json(
+      {
+        error: 'Failed to communicate with the backend',
+      },
+      { status: 500 }
+    );
   }
 }
