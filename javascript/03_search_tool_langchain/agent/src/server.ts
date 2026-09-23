@@ -3,6 +3,7 @@ import helmet from 'helmet';
 
 import { env } from './config/env.config.ts';
 import { configCors } from './config/cors.config.ts';
+import { searchRouter } from './routes/search_lcel.ts';
 
 async function bootstrap() {
   const app = express();
@@ -20,12 +21,7 @@ async function bootstrap() {
     });
   });
 
-  app.get('/', (_req: Request, res: Response) => {
-    return res.status(200).json({
-      status: 'ok',
-      message: 'Welcome to the GenAI Playground!',
-    });
-  });
+  app.use('/search', searchRouter);
 
   const PORT = env.PORT || 8080;
 
