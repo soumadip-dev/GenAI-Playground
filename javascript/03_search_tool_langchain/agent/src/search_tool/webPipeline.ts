@@ -168,7 +168,7 @@ export const composeStep = RunnableLambda.from(async function (input: {
   };
 });
 
-export const webChain = RunnableSequence.from([
+export const webPipeline = RunnableSequence.from([
   executeWebSearchStep,
   executeOpenAndSummarizeStep,
   composeStep,
