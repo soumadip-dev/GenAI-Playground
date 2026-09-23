@@ -9,7 +9,7 @@
 //
 // Both paths produce the same response shape.
 
-export type candidate = {
+export type Candidate = {
   answer: string;
 
   // List of source URLs used to generate the answer.
