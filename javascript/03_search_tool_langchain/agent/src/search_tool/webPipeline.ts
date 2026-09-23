@@ -110,7 +110,12 @@ export const composeStep = RunnableLambda.from(async function (input: {
   if (!input.pageSummaries || input.pageSummaries.length === 0) {
     const response = await model.invoke([
       new SystemMessage(
-        ['You answer briefly and clearly for beginners.', 'If you are unsure, say so.'].join('\n')
+        [
+          'You are a helpful AI assistant that answers user questions clearly and concisely.',
+          'Answer at a beginner-friendly level using simple and easy-to-understand language.',
+          'If you are unsure about an answer, clearly state that you are unsure instead of making up information.',
+          'Do not add unnecessary details or unrelated information.',
+        ].join('\n')
       ),
       new HumanMessage(input.q),
     ]);
@@ -130,17 +135,22 @@ export const composeStep = RunnableLambda.from(async function (input: {
   const response = await model.invoke([
     new SystemMessage(
       [
-        'You concisely answer questions using the provided page summaries.',
-        'Rules:',
-        '- Be accurate and neutral.',
-        '- Use a maximum of 5-8 sentences.',
-        '- Use only the provided summaries; do not invent new facts.',
+        'You are a helpful AI assistant that answers questions using the provided web page summaries.',
+        'Use only the information contained in the provided summaries.',
+        'Do not invent, assume, or add facts that are not supported by the summaries.',
+        'If the provided summaries do not contain enough information to answer the question, clearly say that the available information is insufficient.',
+        'Give an accurate, neutral, and concise answer.',
+        'Use simple language that is easy for beginners to understand.',
+        'Keep the answer within 5-8 sentences unless additional detail is necessary for accuracy.',
       ].join('\n')
     ),
     new HumanMessage(
-      [`Question: ${input.q}`, 'Summaries:', JSON.stringify(input.pageSummaries, null, 2)].join(
-        '\n'
-      )
+      [
+        `Question: ${input.q}`,
+        '',
+        'Web Page Summaries:',
+        JSON.stringify(input.pageSummaries, null, 2),
+      ].join('\n')
     ),
   ]);
 
