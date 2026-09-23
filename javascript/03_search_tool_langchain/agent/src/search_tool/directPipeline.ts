@@ -5,7 +5,7 @@ import { createChatModel } from '../config/models.config';
 
 //* Runnable step to generate a direct answer from the user's question.
 export const directPipeline = RunnableLambda.from(async function (input: {
-  q: string;
+  query: string;
   mode: 'web' | 'direct';
 }) {
   //* Create the chat model used to generate the direct answer.
@@ -20,7 +20,7 @@ export const directPipeline = RunnableLambda.from(async function (input: {
         'Do not add unnecessary details or unrelated information.',
       ].join('\n')
     ),
-    new HumanMessage(input.q),
+    new HumanMessage(input.query),
   ]);
 
   // Convert the model response content into a string.

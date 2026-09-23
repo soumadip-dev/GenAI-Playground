@@ -15,11 +15,11 @@ const DEFAULT_TOP_RESULTS_COUNT = 5;
 //* Runnable step to perform a web search query.
 export const executeWebSearchStep = RunnableLambda.from(
   // Routing strategy that selects between web search and direct output.
-  // Input shape: { q: string, mode: "web" | "direct" }
-  async function (input: { q: string; mode: 'web' | 'direct' }) {
+  // Input shape: { query: string, mode: "web" | "direct" }
+  async function (input: { query: string; mode: 'web' | 'direct' }) {
     // Call the searchWeb function to search the internet using Tavily.
     // The returned results array contains objects with the shape: { title, url, snippet }.
-    const searchResults: SearchWebResult = await searchWeb(input.q);
+    const searchResults: SearchWebResult = await searchWeb(input.query);
 
     return {
       ...input,
@@ -27,20 +27,20 @@ export const executeWebSearchStep = RunnableLambda.from(
     };
 
     // Final return shape:
-    // { q, mode, searchResults: Array<{ title, url, snippet }> }
+    // { query, mode, searchResults: Array<{ title, url, snippet }> }
   }
 );
 
 //* After getting the search results, open each URL, extract its content,
 //* and then summarize the extracted content.
 export const executeOpenAndSummarizeStep = RunnableLambda.from(async function (input: {
-  q: string;
+  query: string;
   mode: 'web' | 'direct';
   searchResults: SearchWebResult;
 }) {
   // If there are no valid search results, return an empty summary list with a fallback status.
   if (!Array.isArray(input.searchResults) || input.searchResults.length === 0) {
-    // { q, mode, searchResults, pageSummaries: [], fallback: 'no-results' }
+    // { query, mode, searchResults, pageSummaries: [], fallback: 'no-results' }
     return {
       ...input,
       pageSummaries: [],
@@ -88,7 +88,7 @@ export const executeOpenAndSummarizeStep = RunnableLambda.from(async function (i
     };
   }
 
-  // Return { q, mode, searchResults, pageSummaries, fallback }.
+  // Return { query, mode, searchResults, pageSummaries, fallback }.
   return {
     ...input,
     pageSummaries: successfulPageSummaries,
@@ -98,7 +98,7 @@ export const executeOpenAndSummarizeStep = RunnableLambda.from(async function (i
 
 //* Compose the final answer using either the page summaries or a direct model response.
 export const composeStep = RunnableLambda.from(async function (input: {
-  q: string;
+  query: string;
   pageSummaries: Array<{ url: string; summary: string }>;
   mode: 'web' | 'direct';
   fallback: 'none' | 'no-results' | 'snippets';
@@ -117,7 +117,7 @@ export const composeStep = RunnableLambda.from(async function (input: {
           'Do not add unnecessary details or unrelated information.',
         ].join('\n')
       ),
-      new HumanMessage(input.q),
+      new HumanMessage(input.query),
     ]);
 
     // Convert the model response content into a string.
@@ -136,21 +136,44 @@ export const composeStep = RunnableLambda.from(async function (input: {
     new SystemMessage(
       [
         'You are a helpful AI assistant that answers questions using the provided web page summaries.',
-        'Use only the information contained in the provided summaries.',
-        'Do not invent, assume, or add facts that are not supported by the summaries.',
-        'If the provided summaries do not contain enough information to answer the question, clearly say that the available information is insufficient.',
-        'Give an accurate, neutral, and concise answer.',
+        '',
+        'SOURCE USAGE:',
+        'Use only information supported by the provided summaries.',
+        'Do not invent, assume, or add unsupported facts.',
+        'You may combine relevant information from multiple summaries into one coherent answer.',
+        'If the summaries do not contain enough information to answer the question, clearly state that the available information is insufficient.',
+        '',
+        'FINAL ANSWER STYLE:',
+        'Answer the user directly instead of describing what the sources say.',
+        'Transform information from the summaries into a natural, self-contained answer.',
+        'Never copy source-introduction or source-attribution wording into the final answer.',
+        'Do not mention web pages, websites, articles, guides, rankings, sources, summaries, or publications unless the user explicitly asks for them.',
+        'Do not use phrases such as "according to", "the guide says", "the article says", "the website states", "the source states", "as reported by", "the ranking says", or similar source-referencing phrases.',
+        'Do not mention the name of a ranking or publication merely because it appears in the summaries.',
+        'Do not say that an institution, product, or option is "best" unless the provided information explicitly supports that conclusion.',
+        'Present the relevant facts directly and naturally.',
+        '',
+        'STRUCTURE:',
+        'Start with a direct answer to the question.',
+        'For questions asking for multiple items, use a numbered list or bullet list.',
+        'Include important supporting details only when they are relevant to the question.',
+        'Do not repeat the same information in different forms.',
         'Use simple language that is easy for beginners to understand.',
-        'Keep the answer within 5-8 sentences unless additional detail is necessary for accuracy.',
-      ].join('\n')
+        'Keep the answer concise while providing enough detail to answer the question properly.',
+        '',
+        'ACCURACY:',
+        'Do not turn a ranking from one source into a universal or objective "best" list.',
+        'If the summaries provide a specific ranking, you may present the ranked institutions as a ranking, but do not mention the ranking source unless explicitly requested.',
+        'If the summaries contain different rankings or conflicting information, present the difference clearly and neutrally.',
+      ].join('\\n')
     ),
     new HumanMessage(
       [
-        `Question: ${input.q}`,
+        `Question: ${input.query}`,
         '',
         'Web Page Summaries:',
         JSON.stringify(input.pageSummaries, null, 2),
-      ].join('\n')
+      ].join('\\n')
     ),
   ]);
 

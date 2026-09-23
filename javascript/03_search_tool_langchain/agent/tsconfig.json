@@ -1,36 +1,30 @@
 {
   "compilerOptions": {
-    /* Language and environment */
-    "target": "ES2022",
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
-    "jsx": "react-jsx",
-    /* Modules */
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    // Environment setup & latest features
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "Preserve",
     "moduleDetection": "force",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "verbatimModuleSyntax": true,
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "types": ["bun"],
+
+    // Bundler mode
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    /* Bun */
-    "types": [
-      "bun"
-    ],
-    /* Type checking */
-    "strict": true,
-    "noImplicitOverride": true,
-    "noUncheckedIndexedAccess": true,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,
-    /* Emit */
+    "verbatimModuleSyntax": true,
     "noEmit": true,
-    /* JavaScript support */
-    "allowJs": true
-  },
-  "include": [
-    "src"
-  ]
+
+    // Best practices
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+
+    // Some stricter flags (disabled by default)
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false
+  }
 }

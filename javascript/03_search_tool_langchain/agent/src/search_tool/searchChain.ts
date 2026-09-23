@@ -6,7 +6,7 @@ import { routerStep } from './routeStrategy';
 import { webPipeline } from './webPipeline';
 import type { SearchInput } from '../schemas';
 
-const searchPipeline = RunnableBranch.from<{ q: string; mode: 'web' | 'direct' }, any>([
+const searchPipeline = RunnableBranch.from<{ query: string; mode: 'web' | 'direct' }, any>([
   [input => input.mode === 'web', webPipeline],
   directPipeline,
 ]);
