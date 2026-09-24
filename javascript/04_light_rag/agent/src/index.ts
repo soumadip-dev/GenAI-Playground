@@ -1,33 +1,38 @@
 import express, { type Request, type Response } from 'express';
 import helmet from 'helmet';
 
-import { env } from './config/env.config.ts';
 import { configCors } from './config/cors.config.ts';
+import { env } from './config/env.config.ts';
+import { knowledgeBaseRouter } from './routes/knowledge-base.routes.ts';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = express();
 
-  app.use(configCors());
+  // Security and request configuration
   app.use(helmet());
-
+  app.use(configCors());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  // Health check
   app.get('/health', (_req: Request, res: Response) => {
-    return res.status(200).json({
+    res.status(200).json({
       status: 'ok',
-      message: 'Server is healthy and running 💚',
+      message: 'Server is healthy and running.',
     });
   });
 
-  const PORT = env.PORT || 8080;
+  // API routes
+  app.use('/api/knowledge-base', knowledgeBaseRouter);
 
-  app.listen(PORT, () => {
-    console.log(`Server listening at http://localhost:${PORT} 🌐`);
+  const port = env.PORT || 8080;
+
+  app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
   });
 }
 
-bootstrap().catch(error => {
-  console.error('Failed to start the server ❌', error);
+bootstrap().catch((error: unknown) => {
+  console.error('Failed to start the server:', error);
   process.exit(1);
 });

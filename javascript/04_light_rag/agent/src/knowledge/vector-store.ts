@@ -4,7 +4,7 @@ import type { Document } from '@langchain/core/documents';
 
 import { env } from '../config/env.config';
 
-export const RETRIEVER_TOP_K = 5;
+export const RETRIEVER_TOP_K = 2;
 
 function createEmbeddings(): GoogleGenerativeAIEmbeddings {
   const apiKey = env.GEMINI_API_KEY;
