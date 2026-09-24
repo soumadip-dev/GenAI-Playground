@@ -70,11 +70,6 @@ def build_embeddings(
     )
 
 
-# =========================================
-# INDEXING
-# =========================================
-
-
 def extract_youtube_id(url: str) -> str | None:
     """Extract the YouTube video ID from a YouTube URL."""
 
@@ -85,6 +80,12 @@ def extract_youtube_id(url: str) -> str | None:
     return match.group(1) if match else None
 
 
+# =========================================
+# INDEXING
+# =========================================
+
+
+# Document Loaders / Document Ingestion
 def get_youtube_transcript(
     video_id: str,
     language: str | None = None,
@@ -114,6 +115,7 @@ def get_youtube_transcript(
         raise ValueError(f"No transcript found for language: {language}")
 
 
+# Text Chunking
 def split_transcript_into_documents(
     text: str,
     video_id: str,
@@ -136,6 +138,7 @@ def split_transcript_into_documents(
     ]
 
 
+# Embedding Generation + Vector Store Storage
 def build_vector_store(
     documents: list[Document],
     embeddings: GoogleGenerativeAIEmbeddings,
