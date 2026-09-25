@@ -4,15 +4,16 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6"
+    "@types/express": "^5.0.6",
+    "tsx": "^4.23.15"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "@langchain/classic": "^1.0.48",
