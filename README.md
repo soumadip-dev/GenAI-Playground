@@ -3,33 +3,26 @@
 # GenAI-Playground ✨
 
 <p>
-A personal collection of <b>hands-on projects</b>, <b>experiments</b>, and <b>learning notes</b> while exploring the world of Generative AI. 🤖
+A comprehensive, hands-on repository of <b>AI agents</b>, <b>RAG pipelines</b>, <b>LangChain/LCEL abstractions</b>, <b>prompt engineering strategies</b>, and <b>full-stack Generative AI applications</b>.
 </p>
 
-<img src="./javascript/02_structured_output/client/public/banner.jpg" alt="Banner" width="900">
+<img src="./notes/images/banner.jpg" alt="GenAI Playground Banner" width="900">
 
 </div>
 
+---
+
 ## 🔋 Contents
 
-- 🤖 AI agents and workflows
-- 📝 Prompt engineering
-- 📄 Structured outputs and JSON schemas
-- 🔗 API integrations
-- 🦜 LangChain and LangGraph
-- 🔍 Retrieval-Augmented Generation (RAG)
-- 🧠 Embeddings and vector databases
-- 🛠️ MCP and AI engineering concepts
-- 🚀 Mini AI-powered applications
+This repository serves as an active playground for exploring and implementing modern Generative AI engineering concepts across both **Python** and **JavaScript/TypeScript** ecosystems.
 
-## 🎯 Purpose
-
-This repository serves as a:
-
-- 📖 Learning journal
-- 🧪 Experiment playground
-- 🛠️ Collection of practical implementations
-- 📈 Progress tracker throughout my GenAI journey
+- 🤖 **AI Agents & Workflows**: Standard LLM calls, function/tool calling, ReAct loop, Planner-Executor pattern, Research agent, and Reflection agent loops.
+- 🔍 **Retrieval-Augmented Generation (RAG)**: Ingestion pipelines, text splitters (length, structured, code-aware), vector stores (Chroma, FAISS, in-memory), and advanced retrievers (MMR, Multi-Query, Contextual Compression, Wikipedia).
+- 🦜 **LangChain & LCEL**: Building blocks including LLMs, ChatModels, Embeddings, PromptTemplates, Output Parsers, Chains, and LCEL Runnables (`RunnableSequence`, `RunnableParallel`, `RunnablePassthrough`, `RunnableLambda`, `RunnableBranch`).
+- 📄 **Structured Outputs**: Schema-enforced JSON extraction using Pydantic, TypedDict, Zod schemas, and LangChain structured outputs.
+- 🎯 **Prompt Engineering**: Zero-shot, Few-shot, Persona, and Chain-of-Thought (CoT) techniques.
+- 🚀 **Full-Stack Applications**: Modern web apps built with Express/TypeScript backends and Next.js UI clients for structured outputs, search agents, and Light RAG indexing.
+- 📚 **In-Depth Notes**: Conceptual documentation and architecture diagrams covering core LLM theory, prompt design, agent patterns, LangChain mechanics, and RAG pipelines.
 
 ---
 
