@@ -5,6 +5,8 @@ const chatContainer = document.querySelector('#chat-container');
 const emptyState = document.querySelector('#empty-state');
 const suggestionChips = document.querySelectorAll('.suggestion-chip');
 
+const threadId = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+
 let isGenerating = false;
 
 // Auto-resize textarea & toggle send button state
@@ -150,7 +152,7 @@ async function callServer(inputText) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ message: inputText }),
+    body: JSON.stringify({ message: inputText, threadId }),
   });
 
   if (!response.ok) {
