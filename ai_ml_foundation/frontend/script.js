@@ -5,7 +5,11 @@ const chatContainer = document.querySelector('#chat-container');
 const emptyState = document.querySelector('#empty-state');
 const suggestionChips = document.querySelectorAll('.suggestion-chip');
 
-const threadId = Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+function genThreadId() {
+  return Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+}
+
+let threadId = genThreadId();
 
 let isGenerating = false;
 
@@ -33,8 +37,15 @@ askBtn.addEventListener('click', submitMessage);
 
 // Clear chat history
 clearBtn.addEventListener('click', () => {
+  if (isGenerating) return;
+
+  // Generate a new thread ID
+  threadId = genThreadId();
+
   chatContainer.innerHTML = '';
   emptyState.classList.remove('hidden');
+
+  
   input.focus();
 });
 
@@ -152,7 +163,7 @@ async function callServer(inputText) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ message: inputText, threadId }),
+    body: JSON.stringify({ message: inputText, thread_id: threadId }),
   });
 
   if (!response.ok) {

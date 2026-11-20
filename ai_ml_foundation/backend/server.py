@@ -17,6 +17,7 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     message: str
+    thread_id: str
 
 
 @app.get("/")
@@ -26,6 +27,12 @@ def read_root():
 
 @app.post("/chat")
 def chat(payload: ChatRequest):
+    if not payload.thread_id.strip():
+        raise HTTPException(status_code=400, detail="threadId cannot be empty.")
+
+    print(f"Thread ID: {payload.thread_id}")
     print(f"Message: {payload.message}")
-    reply = generate(payload.message)
+
+    reply = generate(user_message=payload.message, thread_id=payload.thread_id)
+
     return {"reply": reply or "No response generated."}

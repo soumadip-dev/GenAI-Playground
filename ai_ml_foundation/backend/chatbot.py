@@ -1,9 +1,11 @@
 import json
 import os
 from datetime import datetime
+
 from dotenv import load_dotenv
 from groq import Groq
 from tavily import TavilyClient
+from cachetools import TTLCache
 
 load_dotenv()
 
@@ -16,21 +18,48 @@ if not groq_api_key or not tavily_api_key:
 client = Groq(api_key=groq_api_key)
 tavily_client = TavilyClient(api_key=tavily_api_key)
 
+# In-memory conversation storage (24 hours TTL)
+storage = TTLCache(maxsize=1000, ttl=60 * 60 * 24)
+
 
 def web_search(query: str) -> str:
     response = tavily_client.search(query, max_results=3)
+
     results = [
         result["content"]
         for result in response.get("results", [])
         if result.get("content")
     ]
+
     return "\n".join(results) if results else "No search results found."
 
 
-def generate(user_message: str) -> str | None:
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "web_search",
+            "description": "Search the internet for the latest information.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "The search query to perform.",
+                    }
+                },
+                "required": ["query"],
+            },
+        },
+    }
+]
+
+
+def generate(user_message: str, thread_id: str) -> str | None:
+
     current_dt = datetime.now().astimezone().strftime("%a, %d %b %Y %I:%M:%S %p %Z")
 
-    messages = [
+    base_messages = [
         {
             "role": "system",
             "content": f"""You are a smart personal assistant.
@@ -40,51 +69,22 @@ Your responsibilities:
 - If a question requires real-time, local, or up-to-date information, or if you don't know the answer, use the available tools to find it.
 - Decide when to rely on your own knowledge and when to use a tool.
 - Do not mention tools unless necessary.
-- Keep your responses concise and to the point. Avoid unnecessary explanations or irrelevant details.(always in plain text not in .md or other format)
+- Keep your responses concise and to the point. Avoid unnecessary explanations or irrelevant details. Always respond in plain text.
 
 Available tool:
 
 web_search(query: string) -> Use this tool to search the internet for current, local, up-to-date, or unknown information.
 
-Examples:
-
-Q: What is the capital of France?
-A: The capital of France is Paris.
-
-Q: What is the weather in Mumbai right now?
-A: Use the search tool to find the latest weather information.
-
-Q: Who is the Prime Minister of India?
-A: The current Prime Minister of India is Narendra Modi.
-
-Q: Tell me the latest IT news.
-A: Use the search tool to find the latest IT news.
-
 Current date and time: {current_dt}
 """,
-        },
-        {"role": "user", "content": user_message},
-    ]
-
-    tools = [
-        {
-            "type": "function",
-            "function": {
-                "name": "web_search",
-                "description": "Search the internet for the latest information.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "query": {
-                            "type": "string",
-                            "description": "The search query to perform.",
-                        }
-                    },
-                    "required": ["query"],
-                },
-            },
         }
     ]
+
+    # Retrieve existing history or initialize a new conversation
+    messages = storage.get(thread_id, base_messages.copy())
+
+    # Append current user message
+    messages.append({"role": "user", "content": user_message})
 
     # Tool-calling loop
     while True:
@@ -100,6 +100,11 @@ Current date and time: {current_dt}
 
         # Final response
         if not assistant_message.tool_calls:
+            messages.append({"role": "assistant", "content": assistant_message.content})
+
+            # Save updated conversation history
+            storage[thread_id] = messages
+
             return assistant_message.content
 
         # Append assistant tool-call message
@@ -117,6 +122,7 @@ Current date and time: {current_dt}
 
             if function_name == "web_search":
                 query = function_params.get("query")
+
                 if not isinstance(query, str) or not query.strip():
                     tool_result = "Invalid or missing search query."
                 else:
@@ -124,7 +130,7 @@ Current date and time: {current_dt}
             else:
                 tool_result = f"Unknown tool: {function_name}"
 
-            # Send tool result back to LLM
+            # Append tool result
             messages.append(
                 {
                     "role": "tool",
